@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include "Complex.hpp"
+#include <vector>
 
 // Text colors
 #define RED "\e[31m"
@@ -25,15 +25,12 @@ struct Solution {
 		DiscriminantPositive,
 		InfiniteSolutions,
 		OneSolution,
+		DegreeTooHigh
 	};
 	Type type;
 	std::vector<Complex> roots;
 };
 
 Solution solve(const std::vector<double> &coefs);
-double computeDelta(const std::vector<double> &coeff);
-void printReducedForm(const std::vector<double> &coeff);
-Solution solveDegreeTwo(const std::vector<double> &coeff);
-Solution solveDegreeOne(const std::vector<double> &coeff);
-Solution solveDegreeZero(const std::vector<double> &coeff);
-void printSolution(const Solution &solution);
+
+void display(const std::vector<double> &coeff, const Solution &solution);

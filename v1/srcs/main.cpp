@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
 		} else if (argc == 2) {
 			std::cout << "Case input given\n";
 			std::cout << "Input: " << argv[1];
+			// parse returns the reduced form
+			// solve receives the reduced form and returns Solution struct
 		} else {
 			std::cout << "Case no input given\n";
 		}
@@ -28,17 +30,18 @@ int main(int argc, char *argv[]) {
 
 void test() {
 	{
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << GREEN << "Test 1 degree 2, 2 solutions" << NC << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(4.0);
-		coefs.push_back(4.0);
-		coefs.push_back(0.5);
+		std::cout << "===========================================";
+		std::cout << std::endl;
+		std::cout << GREEN << "Test degree 2, 2 solutions: " << NC;
+		std::vector<double> coeff;
+		coeff.push_back(4.0);
+		coeff.push_back(4.0);
+		coeff.push_back(0.5);
 		const Complex expectedSolution1(-4 + 2 * std::sqrt(2), 0);
 		const Complex expectedSolution2(-4 - 2 * std::sqrt(2), 0);
 
-		Solution solution = solve(coefs);
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::DiscriminantPositive);
 		assert(solution.roots.size() == 2);
 		assert(solution.roots[0].real() == expectedSolution1.real());
@@ -46,41 +49,38 @@ void test() {
 		assert(solution.roots[1].real() == expectedSolution2.real());
 		assert(solution.roots[1].imag() == expectedSolution2.imag());
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << std::endl;
 	}
 	{
-		std::cout << GREEN << "Test degree 2, 1 solution" << NC << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(4.0);
-		coefs.push_back(4.0);
-		coefs.push_back(1.0);
+		std::cout << GREEN << "Test degree 2, 1 solution: " << NC;
+		std::vector<double> coeff;
+		coeff.push_back(4.0);
+		coeff.push_back(4.0);
+		coeff.push_back(1.0);
 		const Complex expectedSolution(-2, 0);
 
-		Solution solution = solve(coefs);
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::DiscriminantZero);
 		assert(solution.roots.size() == 1);
 		assert(solution.roots[0].real() == expectedSolution.real());
 		assert(solution.roots[0].imag() == expectedSolution.imag());
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << std::endl;
 	}
 	{
-		std::cout << GREEN << "Test degree 2, 2 complex solutions" << NC << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(4.0);
-		coefs.push_back(4.0);
-		coefs.push_back(5.0);
+		std::cout << GREEN << "Test degree 2, 2 complex solutions: " << NC;
+		std::vector<double> coeff;
+		coeff.push_back(4.0);
+		coeff.push_back(4.0);
+		coeff.push_back(5.0);
 
 		const Complex expectedSolution1(-2.0 / 5.0, 4.0 / 5.0);
 		const Complex expectedSolution2(-2.0 / 5.0, -4.0 / 5.0);
-		Solution solution = solve(coefs);
-		std::cout << std::endl;
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::DiscriminantNegative);
 		assert(solution.roots.size() == 2);
 		assert(solution.roots[0].real() == expectedSolution1.real());
@@ -89,57 +89,50 @@ void test() {
 		assert(solution.roots[1].imag() == expectedSolution2.imag());
 
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << std::endl;
 	}
 	{
-		std::cout << GREEN << "Test degree 1, 1 solution" << NC << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(-1.0);
-		coefs.push_back(2);
+		std::cout << GREEN << "Test degree 1, 1 solution: " << NC;
+		std::vector<double> coeff;
+		coeff.push_back(-1.0);
+		coeff.push_back(2);
 		const Complex expectedSolution(1 / 2.0, 0);
 
-		Solution solution = solve(coefs);
-		std::cout << std::endl;
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::OneSolution);
 		assert(solution.roots.size() == 1);
 		assert(solution.roots[0].real() == expectedSolution.real());
 		assert(solution.roots[0].imag() == expectedSolution.imag());
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << std::endl;
 	}
 	{
-		std::cout << GREEN << "Test degree 0, 0 solution" << NC << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(2);
+		std::cout << GREEN << "Test degree 0, 0 solution :" << NC;
+		std::vector<double> coeff;
+		coeff.push_back(2);
 
-		Solution solution = solve(coefs);
-		std::cout << std::endl;
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::NoSolution);
 		assert(solution.roots.empty());
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
-		std::cout << std::endl;
 	}
 	{
-		std::cout << GREEN << "Test degree 0, infinite" << NC << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
-		std::vector<double> coefs;
-		coefs.push_back(0.0);
+		std::cout << GREEN << "Test degree 0, infinite: " << NC;
+		std::vector<double> coeff;
+		coeff.push_back(0.0);
 
-		Solution solution = solve(coefs);
-		std::cout << std::endl;
+		Solution solution = solve(coeff);
+		display(coeff, solution);
 		assert(solution.type == Solution::Type::InfiniteSolutions);
 		assert(solution.roots.empty());
 		std::cout << "✅" << std::endl;
-		std::cout << "========================================================"
-				  << std::endl;
+		std::cout << "===========================================";
 		std::cout << std::endl;
 	}
 }
