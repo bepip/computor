@@ -48,13 +48,20 @@ Solution solveDegreeTwo(const std::vector<double> &coeff) {
 	assert(coeff.size() == 3);
 	const double delta = computeDelta(coeff);
 	if (delta < 0) {
-		return {Solution::Type::DiscriminantNegative, {}};
+		double absDelta = std::abs(delta);
+		double diviser = 2 * coeff[2];
+		return {Solution::Type::DiscriminantNegative,
+				{Complex(-coeff[1] / diviser, std::sqrt(absDelta) / diviser),
+				 Complex(-coeff[1] / diviser, -std::sqrt(absDelta) / diviser)}};
 	} else if (delta > 0) {
+		Complex c((-coeff[1] + std::sqrt(delta)) / (2 * coeff[2]),
+				  (-coeff[1] - std::sqrt(delta)) / (2 * coeff[2]));
 		return {Solution::Type::DiscriminantPositive,
-				{(-coeff[1] + std::sqrt(delta)) / (2 * coeff[2]),
-				 (-coeff[1] - std::sqrt(delta)) / (2 * coeff[2])}};
+				{Complex((-coeff[1] + std::sqrt(delta)) / (2 * coeff[2]), 0),
+				 Complex((-coeff[1] - std::sqrt(delta)) / (2 * coeff[2]), 0)}};
 	} else {
-		return {Solution::Type::DiscriminantZero, {-coeff[1] / (2 * coeff[2])}};
+		return {Solution::Type::DiscriminantZero,
+				{Complex(-coeff[1] / (2 * coeff[2]), 0)}};
 	}
 }
 
@@ -62,7 +69,7 @@ Solution solveDegreeOne(const std::vector<double> &coeff) {
 	assert(coeff.size() == 2);
 	const double a = coeff[1];
 	const double b = coeff[0];
-	return {Solution::Type::OneSolution, {-b / a}};
+	return {Solution::Type::OneSolution, {Complex(-b / a, 0)}};
 }
 
 Solution solveDegreeZero(const std::vector<double> &coeff) {

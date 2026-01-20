@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Complex.hpp"
 
 // Text colors
 #define RED "\e[31m"
@@ -24,10 +25,9 @@ struct Solution {
 		DiscriminantPositive,
 		InfiniteSolutions,
 		OneSolution,
-		TwoSolutions
 	};
 	Type type;
-	std::vector<double> roots;
+	std::vector<Complex> roots;
 };
 
 Solution solve(const std::vector<double> &coefs);
