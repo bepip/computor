@@ -8,7 +8,7 @@ INC = -I./includes/
 FLAGS = -Werror -Wextra -Wall -g
 SRC_DIR = ./srcs/
 OBJ_DIR = ./objs/
-SRC_FILES = main.cpp Parser.cpp computor.cpp Complex.cpp display.cpp
+SRC_FILES = main.cpp Parser.cpp computor.cpp display.cpp
 
 SRC = $(addprefix ${SRC_DIR}, ${SRC_FILES})
 OBJS = $(addprefix $(OBJ_DIR), $(SRC_FILES:.cpp=.o))

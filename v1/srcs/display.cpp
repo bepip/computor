@@ -7,7 +7,7 @@
 
 namespace {
 	void printReducedForm(const std::vector<double> &coeff) {
-		assert(!coeff.empty());
+		// assert(!coeff.empty());
 
 		std::cout << "Reduced form: ";
 		double first = coeff[0];
@@ -23,57 +23,41 @@ namespace {
 } // namespace
 
 void display(const std::vector<double> &coeff, const Solution &solution) {
-	const uint degree = coeff.size() - 1;
-	printReducedForm(coeff);
+	const uint degree = coeff.empty() ? 0 : coeff.size() - 1;
+	std::cout << "Polynomial degree: " << degree << std::endl;
+	if (degree < 3)
+		printReducedForm(coeff);
 	switch (solution.type) {
 		case Solution::Type::InfiniteSolutions:
-			assert(degree == 0);
 			std::cout << "Any real number is a solution" << std::endl;
 			break;
 		case Solution::Type::NoSolution:
-			assert(degree == 0);
 			std::cout << "No solution." << std::endl;
 			break;
 		case Solution::Type::OneSolution:
-			assert(degree == 1);
-			std::cout << "Polynomial degree: " << degree << std::endl;
-			std::cout << "The solution is:" << std::endl
-					  << solution.roots[0].real() << std::endl;
+			std::cout << "The solution is:" << std::endl;
+			std::cout << solution.roots[0] << std::endl;
 			break;
 		case Solution::Type::DiscriminantNegative:
 			{
-				assert(degree == 2);
-				std::cout << "Polynomial degree: " << degree << std::endl;
 				std::cout
 					<< "Discriminant is strictly negative, the two complex solutions are:"
 					<< std::endl;
-				double real = solution.roots[0].real();
-				double imag = solution.roots[0].imag();
-				std::cout << real << (imag > 0 ? " + " : " - ") << std::abs(imag) << "i"
-						  << std::endl;
-				real = solution.roots[1].real();
-				imag = solution.roots[1].imag();
-				std::cout << real << (imag > 0 ? " + " : " - ") << std::abs(imag) << "i"
-						  << std::endl;
+				std::cout << solution.roots[0] << std::endl;
+				std::cout << solution.roots[1] << std::endl;
 				break;
 			}
 		case Solution::Type::DiscriminantZero:
-			assert(degree == 2);
-			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout << "Discriminant is zero, the solution is:" << std::endl
-					  << solution.roots[0].real() << std::endl;
+					  << solution.roots[0] << std::endl;
 			break;
 		case Solution::Type::DiscriminantPositive:
-			assert(degree == 2);
-			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout << "Discriminant is strictly positive, the two solutions are:"
 					  << std::endl
-					  << solution.roots[0].real() << std::endl
-					  << solution.roots[1].real() << std::endl;
+					  << solution.roots[0] << std::endl
+					  << solution.roots[1] << std::endl;
 			break;
 		case Solution::Type::DegreeTooHigh:
-			assert(degree > 2);
-			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout
 				<< "The polynomial degree is strictly greater than 2, I can't solve."
 				<< std::endl;

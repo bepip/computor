@@ -17,6 +17,9 @@
 #define TEST 0
 #endif // !TEST
 
+#define MAX_DEGREE 2
+#define EPS 1e-9
+
 struct Solution {
 	enum class Type {
 		NoSolution,
@@ -31,6 +34,7 @@ struct Solution {
 	std::vector<Complex> roots;
 };
 
-Solution solve(const std::vector<double> &coefs);
+Solution solve(const std::vector<double> &coeff);
 
 void display(const std::vector<double> &coeff, const Solution &solution);
+bool isZero(double x);
