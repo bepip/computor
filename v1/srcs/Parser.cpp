@@ -1,6 +1,8 @@
 #include "../includes/Parser.hpp"
 #include "../includes/computor.hpp"
+#include <bits/types/cookie_io_functions_t.h>
 #include <cctype>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
@@ -40,7 +42,10 @@ namespace {
 Parser::Parser() {}
 
 std::vector<double> Parser::parse(const std::string &input) {
-
+	if (input.empty()) {
+		std::cerr << "Error\n";
+		exit(1);
+	}
 	size_t eqPos = input.find('=');
 	if (eqPos == std::string::npos)
 		throw std::runtime_error("Invalid equation");

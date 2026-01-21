@@ -7,8 +7,6 @@
 
 namespace {
 	void printReducedForm(const std::vector<double> &coeff) {
-		// assert(!coeff.empty());
-
 		std::cout << "Reduced form: ";
 		double first = coeff[0];
 		if (first < 0)

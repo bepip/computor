@@ -10,12 +10,13 @@ namespace {
 		const double b = coeff[1];
 		const double c = coeff[0];
 		const double delta = b * b - 4 * a * c;
-		if (delta < -EPS) {
+
+		if (delta < -constants::eps) {
 			const double sqrtAbs = std::sqrt(-delta);
 			return {Solution::Type::DiscriminantNegative,
 					{Complex(-b / (2 * a), sqrtAbs / (2 * a)),
 					 Complex(-b / (2 * a), -sqrtAbs / (2 * a))}};
-		} else if (delta > EPS) {
+		} else if (delta > constants::eps) {
 			const double sqrtDelta = std::sqrt(delta);
 			return {Solution::Type::DiscriminantPositive,
 					{Complex((-b + sqrtDelta) / (2 * a)),
@@ -38,7 +39,9 @@ namespace {
 } // namespace
 
 Solution solve(const std::vector<double> &coeff) {
-	const uint degree = coeff.empty() ? 0 : coeff.size() - 1;
+	if (coeff.empty())
+		return {Solution::Type::InfiniteSolutions, {}};
+	const uint degree = coeff.size() - 1;
 
 	switch (degree) {
 		case 0:
@@ -53,5 +56,9 @@ Solution solve(const std::vector<double> &coeff) {
 }
 
 bool isZero(double x) {
-	return std::abs(x) < EPS;
+	return std::abs(x) < constants::eps;
+}
+
+double normalizeZero(double x) {
+	return (std::abs(x) < constants::eps) ? 0.0 : x;
 }

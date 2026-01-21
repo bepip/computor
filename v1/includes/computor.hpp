@@ -17,8 +17,11 @@
 #define TEST 0
 #endif // !TEST
 
-#define MAX_DEGREE 2
-#define EPS 1e-9
+namespace constants {
+	inline constexpr double eps = 1e-9;
+}
+
+struct Complex;
 
 struct Solution {
 	enum class Type {
@@ -32,9 +35,14 @@ struct Solution {
 	};
 	Type type;
 	std::vector<Complex> roots;
+
+	bool operator==(const Solution &other) const {
+		return type == other.type && roots == other.roots;
+	}
 };
 
 Solution solve(const std::vector<double> &coeff);
 
 void display(const std::vector<double> &coeff, const Solution &solution);
 bool isZero(double x);
+double normalizeZero(double x);
