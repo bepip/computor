@@ -1,5 +1,6 @@
 #include "../includes/computor.hpp"
 #include <cassert>
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <sys/types.h>
@@ -21,7 +22,7 @@ namespace {
 } // namespace
 
 void display(const std::vector<double> &coeff, const Solution &solution) {
-	const uint degree = coeff.empty() ? 0 : coeff.size() - 1;
+	const size_t degree = coeff.empty() ? 0 : coeff.size() - 1;
 	std::cout << "Polynomial degree: " << degree << std::endl;
 	if (degree < 3)
 		printReducedForm(coeff);

@@ -1,4 +1,7 @@
 #include "../includes/Complex.hpp"
+#include <cstdlib>
+
+static bool almostEqual(double a, double b, double eps = 1e-9);
 
 Complex::Complex(double r, double i) :
 	_real(normalizeZero(r)),
@@ -21,5 +24,9 @@ std::ostream &operator<<(std::ostream &out, const Complex &c) {
 }
 
 bool Complex::operator==(const Complex &other) const {
-	return _real == other._real && _imag == other._imag;
+	return almostEqual(_real, other._real) && almostEqual(_imag, other._imag);
+}
+
+static bool almostEqual(double a, double b, double eps) {
+	return std::abs(a - b) < eps;
 }

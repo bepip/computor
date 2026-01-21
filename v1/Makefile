@@ -5,7 +5,7 @@ CPP = c++
 INC = -I./includes/
 
 
-FLAGS = -Werror -Wextra -Wall -g
+FLAGS = -Werror -Wextra -Wall -Wpedantic -Wconversion -g -O3 -std=c++17
 SRC_DIR = ./srcs/
 OBJ_DIR = ./objs/
 SRC_FILES = main.cpp Parser.cpp computor.cpp display.cpp Complex.cpp test.cpp

@@ -41,7 +41,7 @@ namespace {
 Solution solve(const std::vector<double> &coeff) {
 	if (coeff.empty())
 		return {Solution::Type::InfiniteSolutions, {}};
-	const uint degree = coeff.size() - 1;
+	const size_t degree = coeff.size() - 1;
 
 	switch (degree) {
 		case 0:

@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+// NOTE: could improve test by sorting roots: right now {r1, r2} != {r2, r1}
+
 void runTest(const TestCase &tc, Parser &parser) {
 	std::cout << "===========================================";
 	std::cout << std::endl;
@@ -25,8 +27,8 @@ void runTests() {
 		 "0.5 * X^2 + 4 * X^1 + 4 * X^0 = 0 * X^0",
 		 {Solution::Type::DiscriminantPositive,
 		  {
-			  Complex(-4 + 2 * std::sqrt(2)),
-			  Complex(-4 - 2 * std::sqrt(2))
+			  Complex(-4 + 2 * std::sqrt(2.0)),
+			  Complex(-4 - 2 * std::sqrt(2.0))
 		  }
 		 }
 		},
@@ -101,8 +103,8 @@ void runTests() {
 		 "10 * X^2 + 9.33 * X^3 - 19 * X^2 + 5 * X^1 = 10 * X^2 - 3 * X^1 - 2 * X^0 + 9.33 * X^3 - 29 * X^2 + 3 * X^1 + 1 * X^0",
 		 {Solution::Type::DiscriminantNegative,
 		  {
-			  Complex(-1.0 / 4, sqrt(15) / 20.0),
-			  Complex(-1.0 / 4, - sqrt(15) / 20.0)
+			  Complex(-1.0 / 4, sqrt(15.0) / 20.0),
+			  Complex(-1.0 / 4, - sqrt(15.0) / 20.0)
 		  }
 		 }
 		},
