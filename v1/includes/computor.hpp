@@ -21,8 +21,6 @@ namespace constants {
 	inline constexpr double eps = 1e-9;
 }
 
-struct Complex;
-
 struct Solution {
 	enum class Type {
 		NoSolution,

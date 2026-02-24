@@ -1,4 +1,5 @@
 #include "../includes/Complex.hpp"
+#include "../includes/computor.hpp"
 #include <cstdlib>
 
 static bool almostEqual(double a, double b, double eps = 1e-9);

@@ -2,6 +2,7 @@
 #include "../includes/computor.hpp"
 #include <bits/types/cookie_io_functions_t.h>
 #include <cctype>
+#include <cstddef>
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -32,11 +33,10 @@ namespace {
 	}
 
 	void trimTrailingZeros(std::vector<double> &coeff) {
-		while (!coeff.empty() && isZero(coeff.back() && coeff.begin() != coeff.end())) {
+		while (!coeff.empty() && isZero(coeff.back()) && coeff.begin() != coeff.end()) {
 			coeff.pop_back();
 		}
 	}
-
 } // namespace
 
 Parser::Parser() {}
@@ -61,10 +61,10 @@ std::vector<double> Parser::parse(const std::string &input) {
 	}
 
 	int maxPower = poly.rbegin()->first;
-	std::vector<double> coeff(maxPower + 1, 0.0);
+	std::vector<double> coeff(static_cast<size_t>(maxPower + 1), 0.0);
 
 	for (const auto &[power, value] : poly) {
-		coeff[power] = value;
+		coeff[static_cast<size_t>(power)] = value;
 	}
 	trimTrailingZeros(coeff);
 	return coeff;
