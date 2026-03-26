@@ -2,7 +2,6 @@
 #include "../includes/computor.hpp"
 #include "../includes/test.hpp"
 #include <cassert>
-#include <cmath>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -19,7 +18,7 @@ int main(int argc, char *argv[]) {
 				  << std::endl;
 		return 1;
 	}
-	std::string input = "";
+	std::string input;
 	if (argc == 1) {
 		std::cout << "Please enter the equation: ";
 		std::getline(std::cin, input);
@@ -36,6 +35,6 @@ int main(int argc, char *argv[]) {
 		Solution solution = solve(coeff);
 		display(coeff, solution);
 	} catch (std::exception &e) {
-		std::cout << "Unexpected Error :" << e.what() << std::endl;
+		std::cout << "Unexpected Error : " << e.what() << std::endl;
 	}
 }

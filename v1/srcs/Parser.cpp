@@ -1,7 +1,6 @@
 #include "../includes/Parser.hpp"
 #include "../includes/computor.hpp"
 #include <bits/types/cookie_io_functions_t.h>
-#include <cctype>
 #include <cstddef>
 #include <iostream>
 #include <map>
@@ -55,7 +54,9 @@ std::vector<double> Parser::parse(const std::string &input) {
 	std::map<int, double> poly;
 	parseSide(lhs, poly, +1);
 	parseSide(rhs, poly, -1);
-
+	//if (rhs != " 0") {
+	//	parseSide(rhs, poly, -1);
+	//}
 	if (poly.empty()) {
 		return {};
 	}
