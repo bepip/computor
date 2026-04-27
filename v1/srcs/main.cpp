@@ -1,7 +1,6 @@
 #include "../includes/Parser.hpp"
 #include "../includes/computor.hpp"
 #include "../includes/test.hpp"
-#include <cassert>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -30,8 +29,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	try {
-		Parser parser;
-		const std::vector<double> coeff = parser.parse(input);
+		const std::vector<double> coeff = Parser::parse(input);
 		Solution solution = solve(coeff);
 		display(coeff, solution);
 	} catch (std::exception &e) {

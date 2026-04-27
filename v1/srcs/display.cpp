@@ -1,5 +1,4 @@
 #include "../includes/computor.hpp"
-#include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
@@ -23,43 +22,51 @@ namespace {
 
 void display(const std::vector<double> &coeff, const Solution &solution) {
 	const size_t degree = coeff.empty() ? 0 : coeff.size() - 1;
-	std::cout << "Polynomial degree: " << degree << std::endl;
-	if (degree < 3)
-		printReducedForm(coeff);
 	switch (solution.type) {
 		case Solution::Type::InfiniteSolutions:
-			std::cout << "Any real number is a solution" << std::endl;
+			printReducedForm(coeff);
+			std::cout << "Any real number is a solution." << std::endl;
 			break;
 		case Solution::Type::NoSolution:
+			printReducedForm(coeff);
 			std::cout << "No solution." << std::endl;
 			break;
 		case Solution::Type::OneSolution:
+			printReducedForm(coeff);
+			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout << "The solution is:" << std::endl;
 			std::cout << solution.roots[0] << std::endl;
 			break;
 		case Solution::Type::DiscriminantNegative:
-			{
-				std::cout
-					<< "Discriminant is strictly negative, the two complex solutions are:"
-					<< std::endl;
-				std::cout << solution.roots[0] << std::endl;
-				std::cout << solution.roots[1] << std::endl;
-				break;
-			}
+			printReducedForm(coeff);
+			std::cout << "Polynomial degree: " << degree << std::endl;
+			std::cout
+				<< "Discriminant is strictly negative, the two complex solutions are:"
+				<< std::endl;
+			std::cout << solution.roots[0] << std::endl;
+			std::cout << solution.roots[1] << std::endl;
+			break;
 		case Solution::Type::DiscriminantZero:
+			printReducedForm(coeff);
+			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout << "Discriminant is zero, the solution is:" << std::endl
 					  << solution.roots[0] << std::endl;
 			break;
 		case Solution::Type::DiscriminantPositive:
+			printReducedForm(coeff);
+			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout << "Discriminant is strictly positive, the two solutions are:"
 					  << std::endl
 					  << solution.roots[0] << std::endl
 					  << solution.roots[1] << std::endl;
 			break;
 		case Solution::Type::DegreeTooHigh:
+			printReducedForm(coeff);
+			std::cout << "Polynomial degree: " << degree << std::endl;
 			std::cout
 				<< "The polynomial degree is strictly greater than 2, I can't solve."
 				<< std::endl;
 			break;
 	}
+	std::cout << std::endl;
 }

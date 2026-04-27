@@ -3,14 +3,15 @@
 #include <cmath>
 #include <iostream>
 
-// NOTE: could improve test by sorting roots: right now {r1, r2} != {r2, r1}
+// NOTE:	could improve test by sorting roots: right now {r1, r2} != {r2, r1}
+//			does not check reduced form, only solutions
 
-void runTest(const TestCase &tc, Parser &parser) {
+void runTest(const TestCase &tc) {
 	std::cout << "===========================================";
 	std::cout << std::endl;
 	std::cout << GREEN << "Test: " << tc.name << NC << std::endl
 			  << YELLOW << "Input: " << tc.input << NC << std::endl;
-	const auto parsed = parser.parse(tc.input);
+	const auto parsed = Parser::parse(tc.input);
 	const auto inputSol = solve(parsed);
 	display(parsed, inputSol);
 
@@ -21,10 +22,9 @@ void runTest(const TestCase &tc, Parser &parser) {
 }
 
 void runTests() {
-	Parser parser;
 	std::vector<TestCase> tests = {
 		{"degree 2, 2 solutions",
-		 "0.5 * X^2 + 4 * X^1 + 4 * X^0 = 0 * X^0",
+		 "0.5 * X^2 + 4 * X^1 + 4 * X^0 = 0",
 		 {Solution::Type::DiscriminantPositive,
 		  {
 			  Complex(-4 + 2 * std::sqrt(2.0)),
@@ -110,7 +110,7 @@ void runTests() {
 		},
 	};
 	for (const auto& tc: tests){
-		runTest(tc, parser);
+		runTest(tc);
 	}
 	std::cout << "===========================================";
 	std::cout << std::endl;

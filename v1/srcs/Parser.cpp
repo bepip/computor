@@ -1,6 +1,5 @@
 #include "../includes/Parser.hpp"
 #include "../includes/computor.hpp"
-#include <bits/types/cookie_io_functions_t.h>
 #include <cstddef>
 #include <iostream>
 #include <map>
@@ -38,8 +37,6 @@ namespace {
 	}
 } // namespace
 
-Parser::Parser() {}
-
 std::vector<double> Parser::parse(const std::string &input) {
 	if (input.empty()) {
 		std::cerr << "Error\n";
@@ -53,10 +50,10 @@ std::vector<double> Parser::parse(const std::string &input) {
 
 	std::map<int, double> poly;
 	parseSide(lhs, poly, +1);
-	parseSide(rhs, poly, -1);
-	//if (rhs != " 0") {
-	//	parseSide(rhs, poly, -1);
-	//}
+	//parseSide(rhs, poly, -1);
+	if (rhs != " 0") {
+		parseSide(rhs, poly, -1);
+	}
 	if (poly.empty()) {
 		return {};
 	}

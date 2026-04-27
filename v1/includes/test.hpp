@@ -10,5 +10,5 @@ struct TestCase {
 	Solution expected;
 };
 
-void runTest(const TestCase &tc, Parser &parser);
+void runTest(const TestCase &tc);
 void runTests();

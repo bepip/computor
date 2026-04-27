@@ -8,6 +8,5 @@
 // returns an array
 class Parser {
   public:
-	Parser();
-	std::vector<double> parse(const std::string &input);
+	static std::vector<double> parse(const std::string &input);
 };
