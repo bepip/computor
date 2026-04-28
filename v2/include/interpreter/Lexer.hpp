@@ -2,6 +2,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 enum class TokenType {
 	Number,
@@ -24,5 +25,15 @@ struct Token {
 class Lexer {
   public:
 	Lexer(std::string_view input);
+	std::vector<Token> tokenize();
+
+  private:
+	std::string src;
+	size_t pos;
+
+	char currentChar() const;
+	void advance();
+	void skipWhiteSpace();
+	Token number();
 	Token nextToken();
 };
