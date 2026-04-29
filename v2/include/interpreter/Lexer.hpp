@@ -4,7 +4,7 @@
 #include <string_view>
 #include <vector>
 
-enum class TokenType {
+enum class token_type {
 	Number,
 	Plus,
 	Minus,
@@ -17,9 +17,13 @@ enum class TokenType {
 };
 
 struct Token {
-	TokenType type;
+	token_type type;
 	std::string lexeme;
 	double value;
+
+	std::string to_string() const;
+	bool operator==(const Token &t) const;
+	bool operator!=(const Token &t) const;
 };
 
 class Lexer {

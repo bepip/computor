@@ -1,5 +1,6 @@
 #include "../../include/interpreter/Lexer.hpp"
 #include <cctype>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -16,7 +17,7 @@ std::vector<Token> Lexer::tokenize() {
 	do {
 		t = nextToken();
 		tokens.push_back(t);
-	} while (t.type != TokenType::End);
+	} while (t.type != token_type::End);
 	return tokens;
 }
 
@@ -24,7 +25,7 @@ Token Lexer::nextToken() {
 	skipWhiteSpace();
 
 	if (pos >= src.size())
-		return {TokenType::End, "", 0};
+		return {token_type::End, "", 0};
 	char curr = currentChar();
 
 	if (std::isdigit(curr))
@@ -33,25 +34,25 @@ Token Lexer::nextToken() {
 	switch (curr) {
 		case '+':
 			advance();
-			return {TokenType::Plus, "+", 0};
+			return {token_type::Plus, "+", 0};
 		case '-':
 			advance();
-			return {TokenType::Minus, "-", 0};
+			return {token_type::Minus, "-", 0};
 		case '*':
 			advance();
-			return {TokenType::Mul, "*", 0};
+			return {token_type::Mul, "*", 0};
 		case '/':
 			advance();
-			return {TokenType::Div, "/", 0};
+			return {token_type::Div, "/", 0};
 		case '(':
 			advance();
-			return {TokenType::LParen, "(", 0};
+			return {token_type::LParen, "(", 0};
 		case ')':
 			advance();
-			return {TokenType::RParen, ")", 0};
+			return {token_type::RParen, ")", 0};
 	}
 	advance();
-	return {TokenType::Invalid, std::string(1, curr), 0};
+	return {token_type::Invalid, std::string(1, curr), 0};
 }
 
 void Lexer::advance() {
@@ -66,7 +67,7 @@ Token Lexer::number() {
 	}
 	std::string numStr = src.substr(start, pos - start);
 	return {
-		TokenType::Number,
+		token_type::Number,
 		numStr,
 		std::stod(numStr),
 	};
@@ -80,4 +81,36 @@ void Lexer::skipWhiteSpace() {
 
 char Lexer::currentChar() const {
 	return src[pos];
+}
+
+std::string Token::to_string() const {
+	switch (type) {
+		case token_type::Plus:
+			return "PLUS_SIGN('" + lexeme + "')";
+		case token_type::Minus:
+			return "MINUS_SIGN('" + lexeme + "')";
+		case token_type::Div:
+			return "DIV_SIGN('" + lexeme + "')";
+		case token_type::Mul:
+			return "MUL_SIGN('" + lexeme + "')";
+		case token_type::LParen:
+			return "LPAREN('" + lexeme + "')";
+		case token_type::RParen:
+			return "RPAREN('" + lexeme + "')";
+		case token_type::Number:
+			return "NUMBER('" + lexeme + "')";
+		case token_type::End:
+			return "EOF";
+		case token_type::Invalid:
+			return "INVALID_TOKEN('" + lexeme + "')";
+	}
+	return "INVALID_TOKEN('" + lexeme + "')";
+}
+
+bool Token::operator==(const Token &t) const {
+	return type == t.type && lexeme == t.lexeme && value == t.value;
+}
+
+bool Token::operator!=(const Token &t) const {
+	return !(*this == t);
 }
