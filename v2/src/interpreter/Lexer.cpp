@@ -15,21 +15,23 @@ std::vector<Token> Lexer::tokenize() {
 
 	Token t;
 	do {
-		t = nextToken();
+		t = next_token();
 		tokens.push_back(t);
 	} while (t.type != token_type::End);
 	return tokens;
 }
 
-Token Lexer::nextToken() {
-	skipWhiteSpace();
+Token Lexer::next_token() {
+	skip_white_space();
 
 	if (pos >= src.size())
 		return {token_type::End, "", 0};
-	char curr = currentChar();
+	char curr = current_char();
 
 	if (std::isdigit(curr))
 		return number();
+	if (std::isalpha(curr))
+		return identifier();
 
 	switch (curr) {
 		case '+':
@@ -61,30 +63,69 @@ void Lexer::advance() {
 
 Token Lexer::number() {
 	size_t start = pos;
+	bool seen_dot = false;
 
-	while (pos < src.size() && (isdigit(src[pos]) || src[pos] == '.')) {
-		pos++;
+	while (pos < src.size()) {
+		char c = src[pos];
+
+		if (isdigit(c)) {
+			pos++;
+		} else if (c == '.') {
+			if (seen_dot)
+				break;
+			seen_dot = true;
+			pos++;
+		} else {
+			break;
+		}
 	}
-	std::string numStr = src.substr(start, pos - start);
+	std::string num_str = src.substr(start, pos - start);
+	if (num_str == "." || num_str.back() == '.') {
+		return {token_type::Invalid, num_str, 0};
+	}
 	return {
 		token_type::Number,
-		numStr,
-		std::stod(numStr),
+		num_str,
+		std::stod(num_str),
 	};
 }
 
-void Lexer::skipWhiteSpace() {
+Token Lexer::identifier() {
+	size_t start = pos;
+
+	while (pos < src.size()) {
+		char c = src[pos];
+
+		if (std::isalpha(c)) {
+			pos++;
+		} else {
+			break;
+		}
+	}
+	std::string str = src.substr(start, pos - start);
+	if (str == "i" || str == "I")
+		return {token_type::Imag, str, 0};
+	return {token_type::Ident, str, 0};
+}
+
+void Lexer::skip_white_space() {
 	while (pos < src.size() && isspace(src[pos])) {
 		pos++;
 	}
 }
 
-char Lexer::currentChar() const {
+char Lexer::current_char() const {
 	return src[pos];
 }
 
 std::string Token::to_string() const {
 	switch (type) {
+		case token_type::Ident:
+			return "IDENT('" + lexeme + "')";
+		case token_type::Imag:
+			return "IMAG('" + lexeme + "')";
+		case token_type::Assign:
+			return "ASSIGN('" + lexeme + "')";
 		case token_type::Plus:
 			return "PLUS_SIGN('" + lexeme + "')";
 		case token_type::Minus:
@@ -105,6 +146,10 @@ std::string Token::to_string() const {
 			return "INVALID_TOKEN('" + lexeme + "')";
 	}
 	return "INVALID_TOKEN('" + lexeme + "')";
+}
+
+void Token::print() const {
+	std::cout << this->to_string() << std::endl;
 }
 
 bool Token::operator==(const Token &t) const {

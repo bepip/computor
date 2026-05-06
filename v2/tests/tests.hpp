@@ -23,7 +23,7 @@ struct case_result {
 	size_t fail_index;
 };
 
-void test_lexer();
+test_result test_lexer();
 
 void print_title(std::string_view title);
 void print_test(size_t count, std::string_view msg, const case_result& cr);

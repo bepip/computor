@@ -1,0 +1,114 @@
+::Mandatory:: (link: https://cdn.intra.42.fr/pdf/pdf/188792/en.subject.pdf)
+	- GENERAL:
+		* types:
+			#NOTE: not clear if all coefficients are supposed to be rational numbers
+			rational numbers (does it get its own class?)
+			complex numbers (with rational coefficients)
+			Matrices
+			Polynomial equations of degrees less than or equal to 2
+		* Assignment of en expression to a variable by type inference
+		* Reassignment of an existing variable with an expression of another type
+		* Resolution of a mathematical expression with or without defined variable (s)
+		* Resolution of an equation of degree less than or equal to 2
+		* Operations between types, as much as possible. (Probably matrix mul, scalar * matrice etc)
+		* Exit the program itself (by keyword, signal, keyboard shortcut, ...)
+	- ASSIGNMENT PART:
+		* Rational numbers (for any x ∈ Q)
+		* maginary numbers for any x = a + ib such as (a, b) ∈ Q^2
+		* Matrices for any A ∈ Mn,p(Q)
+		* Functions (with only one variable) // I am assuming no complex numbers for functions coefficients
+		* Must be able to reassign a variable and change the type of variable by inference.
+		* Must be able to reassign the result of a computation to a variable
+	- COMPUTATIONAL PART:
+		* operations:
+			1. mul: '*'
+			2. div: '/'
+			3. plus: '+'
+			4. minus: '−'
+			5. mod: '%'
+			6. matrix mul: '**'
+			7. power of integer and positive (zero included): '^'
+		* Must handle parentheses and computation priorities
+		* Set a function/variable then '= ?' should be used to return the value of this variable in the context of the program.
+		* The resolution of a computation is symbolized by the '?' operator at the end of the input
+		* Manage image resolution (ie. f(2), when f(x) = 2x+59)
+		* It will also have to manage the computation of the square roots of polynomials when the
+			degree is less than or equal to 2, proposing solutions in R or C.
+				funA(x) = x^2 + 2x + 1
+				x^2 + 2x + 1
+				> y = 0
+				0
+				> funA(x) = y ?
+				x^2 + 2x + 1 = 0
+				One solution in R:
+				-1
+
+	- SYNTAX:
+		* Variable/Function names: only letters + case insensitive. No variable can be called i
+		* Each input validation: display value stored in the variable
+			Expressions must be simplified when possible (e.g., (x2 + 3x + 2)/(x + 1) = x + 2 and 2×5 = 10).
+		* 'xx' != x^2 but a variable named xx
+		* Matrix: [[A0,0, A0,1, ...]; [A1,0, A1,1, ...]; ...]
+			The semicolon is used to separate the rows of a matrix, so it is not present in the assignment of
+			a matrix that has only one row. On the other hand, the comma is used to separate the columns of a
+			matrix, which on the other hand will not be present in the assignment of a matrix that has only one column.
+		* Functions: functionName(variable)
+::BONUS::
+	- Function curve display
+	- more functions: exp(x), sqrt(x), abs(x), cos(x), sin(x), tan(x), cot(x), ...
+	- Radian computation for angles
+	- Function composition: F(G(x))
+	- Norm computation
+	- Display stored variables
+	- History of commands + results
+	- Matrix inversion
+	- add vectors
+	- whatever i want
+
+
+::PLAN::
+	- Lexer: transform the input into tokens
+		* tokens:
+			° number
+			° plus
+			° minus
+			° multiplication
+			° division
+			° parentheses ('(', ')')
+			° EOF
+			° invalid
+			° matrix mul ('**')
+			° mod ('%')
+			° i (imaginary)
+			° assign ('=')
+			° query ('?')
+			° comma (',')
+			° semicolon (';')
+			° square brackets ('[', ']')
+			° identifier (alpha digit not accepted)
+			° power ('^')
+
+
+	- Parser: transform the tokens into an abstract syntax tree
+		* Grammar:
+			statement :=
+				  assignment
+				| function_definition
+				| expression
+
+			assignment :=
+				IDENT '=' expression
+
+			function_definition :=
+				IDENT '(' IDENT ')' '=' expression
+
+			expression :=
+				term (('+' | '-') term)*
+
+			term :=
+				factor (('*' | '/') factor)*
+
+			factor :=
+				  NUMBER
+				| IDENT
+				| '(' expression ')'

@@ -18,11 +18,11 @@ TEST_DIR = tests/
 OBJ_DIR = obj/
 
 CLI = repl.cpp
-INTERPRETER = Lexer.cpp
-MATHLIB = 
+INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp
+MATHLIB = Value.cpp math_utils.cpp Complex.cpp
 COMMON = utils.cpp
-TEST = lexer_test.cpp main_test.cpp tests_utils.cpp
 MAIN = main.cpp
+TEST = lexer_test.cpp main_test.cpp tests_utils.cpp
 
 CLI_SRC = $(addprefix ${CLI_DIR}, ${CLI})
 INTERPRETER_SRC = $(addprefix ${INTERPRETER_DIR}, ${INTERPRETER})

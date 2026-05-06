@@ -5,6 +5,9 @@
 #include <vector>
 
 enum class token_type {
+	Ident,
+	Assign,
+	Imag,
 	Number,
 	Plus,
 	Minus,
@@ -24,20 +27,23 @@ struct Token {
 	std::string to_string() const;
 	bool operator==(const Token &t) const;
 	bool operator!=(const Token &t) const;
+	void print() const;
 };
 
 class Lexer {
+  private:
+	std::string src;
+	size_t pos;
+
   public:
 	Lexer(std::string_view input);
 	std::vector<Token> tokenize();
 
   private:
-	std::string src;
-	size_t pos;
-
-	char currentChar() const;
+	char current_char() const;
 	void advance();
-	void skipWhiteSpace();
+	void skip_white_space();
 	Token number();
-	Token nextToken();
+	Token identifier();
+	Token next_token();
 };

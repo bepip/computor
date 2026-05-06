@@ -59,7 +59,12 @@ namespace {
 											   });
 
 		add_test_case("A", {
-							   {token_type::Invalid, "A", 0},
+							   {token_type::Ident, "A", 0},
+							   {token_type::End, "", 0},
+						   });
+		add_test_case("Aasdasdasd i", {
+							   {token_type::Ident, "Aasdasdasd", 0},
+							   {token_type::Imag, "i", 0},
 							   {token_type::End, "", 0},
 						   });
 		add_test_case("...", {
@@ -87,8 +92,9 @@ namespace {
 } // namespace
 
 // main function to call to run all lexer tests
-void test_lexer() {
+test_result test_lexer() {
 	print_title("Lexer");
-	auto [failed, total] = test_tokenize();
-	print_result(failed, total);
+	const auto &result = test_tokenize();
+	print_result(result.failed, result.total);
+	return result;
 }

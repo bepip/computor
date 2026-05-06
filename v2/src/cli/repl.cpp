@@ -16,7 +16,7 @@ namespace {
 	}
 
 	void show_help() {
-		printf("Not implemented yet");
+		printf("Not implemented yet\n");
 	}
 
 	void welcome_message() {
@@ -38,11 +38,12 @@ void start_repl() {
 			show_help();
 			continue;
 		}
-		//	try {
-		//		Value result = runtime.execute(line);
-		//		print_value(result);
-		//	} catch (const std::exception &e) {
-		//		print_error(e.what());
-		//	}
+		try {
+			Value result = runtime.execute(line);
+			result.print();
+		} catch (const std::exception &e) {
+			std::cout << "Error: " << e.what() << std::endl;
+			// print_error(e.what());
+		}
 	}
 }
