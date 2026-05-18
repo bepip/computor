@@ -8,10 +8,10 @@
 class Parser {
   private:
 	std::vector<Token> tokens;
-	size_t current;
+	size_t pos;
 
   public:
-	Parser(std::vector<Token> tokens);
+	explicit Parser(std::vector<Token> tokens);
 	stmt_ptr parse();
 
   private:
@@ -26,7 +26,11 @@ class Parser {
 	expr_ptr parse_unary();
 	expr_ptr parse_factor();
 
-	Token peek(size_t offset = 0) const;
-	Token advance();
+	const Token &peek(size_t offset = 0) const;
+	const Token &previous() const;
+	const Token &advance();
+	bool is_at_end() const;
+	const Token &consume(token_type type, std::string_view message);
+
 	bool match(token_type t);
 };

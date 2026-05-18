@@ -1,15 +1,15 @@
 #include "../../include/interpreter/Parser.hpp"
+#include <memory>
 #include <vector>
 
 Parser::Parser(std::vector<Token> tokens) :
 	tokens(std::move(tokens)),
-	current(0) {}
+	pos(0) {}
 
 // let's start with only parsing assignments
 // NOTE: how to start this shit?
 stmt_ptr Parser::parse() {
-	parse_assignment();
-	return nullptr;
+	return parse_assignment();
 }
 
 stmt_ptr Parser::parse_statement() {
@@ -18,11 +18,10 @@ stmt_ptr Parser::parse_statement() {
 
 // an assignment only consists of IDENT '=' expression
 stmt_ptr Parser::parse_assignment() {
-	if (peek().type == token_type::Ident && peek(1).type == token_type::Assign) {
-		Token t = advance();
-		return new AssignmentStmt(advance().lexeme,);
-	}
-	return nullptr;
+	const Token &name = consume(token_type::Ident, "Expected identifier");
+	consume(token_type::Assign, "Expected '=");
+	expr_ptr expr = parse_expression();
+	return std::make_unique<AssignmentStmt>(name.lexeme, std::move(expr));
 }
 
 stmt_ptr Parser::parse_function_definition() {
@@ -39,7 +38,14 @@ stmt_ptr Parser::parse_query_statement() {
 
 // expression:= term (('+' | '-') term)*
 expr_ptr Parser::parse_expression() {
-	return nullptr;
+	auto left = parse_term();
+	while (match(token_type::Plus) || match(token_type::Minus)) {
+		char op = previous().lexeme[0];
+		auto right = parse_term();
+		
+		left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
+	}
+	return left;
 }
 
 // term:= factor (('*' | '/') factor)*
@@ -58,11 +64,11 @@ expr_ptr Parser::parse_factor() {
 }
 
 Token Parser::peek(size_t offset) const {
-	return tokens[current + offset];
+	return tokens[pos + offset];
 }
 
 Token Parser::advance() {
-	return tokens[current++];
+	return tokens[pos++];
 }
 
 bool Parser::match(token_type t) {
