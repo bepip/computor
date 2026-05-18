@@ -92,23 +92,51 @@
 	- Parser: transform the tokens into an abstract syntax tree
 		* Grammar:
 			statement :=
-				  assignment
-				| function_definition
-				| expression
+				  function_definition
+				| assignment
+				| query_statement
+				| expression_statement
 
-			assignment :=
-				IDENT '=' expression
 
 			function_definition :=
 				IDENT '(' IDENT ')' '=' expression
 
+
+			assignment :=
+				IDENT '=' expression
+
+
+			query_statement :=
+				expression '=' '?'
+
+
+			expression_statement :=
+				expression
+
+
 			expression :=
 				term (('+' | '-') term)*
 
+
 			term :=
-				factor (('*' | '/') factor)*
+				power (('*' | '/') power)*
+
+
+			power :=
+				unary ('^' unary)*
+
+
+			unary :=
+				  '-' unary
+				| factor
+
 
 			factor :=
 				  NUMBER
 				| IDENT
+				| function_call
 				| '(' expression ')'
+
+
+			function_call :=
+				IDENT '(' expression ')'

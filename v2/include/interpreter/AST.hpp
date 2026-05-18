@@ -96,3 +96,15 @@ class QueryStmt : public Statement {
 	QueryStmt(expr_ptr expr) :
 		expr(std::move(expr)) {}
 };
+
+class ASTPrinter {
+  public:
+	static void print(const Statement *stmt);
+
+  private:
+	ASTPrinter() = delete;
+	static void print_statement(const Statement *stmt, size_t indent);
+	static void print_expression(const Expression *expr, size_t indent);
+
+	static void indent(size_t level);
+};

@@ -52,6 +52,9 @@ Token Lexer::next_token() {
 		case ')':
 			advance();
 			return {token_type::RParen, ")", 0};
+		case '=':
+			advance();
+			return {token_type::Assign, "=", 0};
 	}
 	advance();
 	return {token_type::Invalid, std::string(1, curr), 0};
@@ -140,6 +143,8 @@ std::string Token::to_string() const {
 			return "RPAREN('" + lexeme + "')";
 		case token_type::Number:
 			return "NUMBER('" + lexeme + "')";
+		case token_type::Query:
+			return "QUERY('" + lexeme + "')";
 		case token_type::End:
 			return "EOF";
 		case token_type::Invalid:

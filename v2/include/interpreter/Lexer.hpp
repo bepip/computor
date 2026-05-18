@@ -15,6 +15,7 @@ enum class token_type {
 	Div,
 	LParen,
 	RParen,
+	Query,
 	End,
 	Invalid
 };

@@ -39,8 +39,9 @@ void start_repl() {
 			continue;
 		}
 		try {
-			Value result = runtime.execute(line);
-			result.print();
+			// Value result =
+			runtime.execute(line);
+			// result.print();
 		} catch (const std::exception &e) {
 			std::cout << "Error: " << e.what() << std::endl;
 			// print_error(e.what());
