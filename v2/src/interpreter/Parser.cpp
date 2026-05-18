@@ -5,27 +5,10 @@ Parser::Parser(std::vector<Token> tokens) :
 	tokens(std::move(tokens)),
 	current(0) {}
 
+// let's start with only parsing assignments
+// NOTE: how to start this shit?
 stmt_ptr Parser::parse() {
-	Token first = peek();
-	Token second = peek(1);
-	Token third = peek(2);
-	Token fourth = peek(3);
-	Token fifth = peek(4);
-
-	if (first.type == token_type::Ident) {
-		if (second.type == token_type::Assign) {
-			return parse_assignment();
-		}
-		if (second.type == token_type::LParen) {
-			if (third.type == token_type::Ident) {
-				return parse_function_definition();
-			} else if (third.type == token_type::Number) {
-				return 
-			}
-		}
-	} else {
-		return parse_expression_statement();
-	}
+	parse_assignment();
 	return nullptr;
 }
 
@@ -33,7 +16,12 @@ stmt_ptr Parser::parse_statement() {
 	return nullptr;
 }
 
+// an assignment only consists of IDENT '=' expression
 stmt_ptr Parser::parse_assignment() {
+	if (peek().type == token_type::Ident && peek(1).type == token_type::Assign) {
+		Token t = advance();
+		return new AssignmentStmt(advance().lexeme,);
+	}
 	return nullptr;
 }
 
@@ -49,10 +37,12 @@ stmt_ptr Parser::parse_query_statement() {
 	return nullptr;
 }
 
+// expression:= term (('+' | '-') term)*
 expr_ptr Parser::parse_expression() {
 	return nullptr;
 }
 
+// term:= factor (('*' | '/') factor)*
 expr_ptr Parser::parse_term() {
 	return nullptr;
 }
@@ -61,6 +51,8 @@ expr_ptr Parser::parse_unary() {
 	return nullptr;
 }
 
+// NOTE: for now just focus on numbers
+//  factor:= NUMBER | IDENT | '(' expression ')'
 expr_ptr Parser::parse_factor() {
 	return nullptr;
 }
