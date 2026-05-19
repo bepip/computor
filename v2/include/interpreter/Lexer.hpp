@@ -13,6 +13,7 @@ enum class token_type {
 	Minus,
 	Mul,
 	Div,
+	Power,
 	LParen,
 	RParen,
 	Query,
@@ -37,7 +38,7 @@ class Lexer {
 	size_t pos;
 
   public:
-	Lexer(std::string_view input);
+	explicit Lexer(std::string_view input);
 	std::vector<Token> tokenize();
 
   private:

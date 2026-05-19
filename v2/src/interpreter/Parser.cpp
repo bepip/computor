@@ -9,11 +9,13 @@ Parser::Parser(std::vector<Token> tokens) :
 	tokens(std::move(tokens)),
 	pos(0) {}
 
-// let's start with only parsing assignments
-// NOTE: how to start this shit?
-//		 for now i only handle assignments, no idea how do differentiate
-// between different types of inputs
-[[nodiscard]] stmt_ptr Parser::parse() { return parse_statement(); }
+[[nodiscard]] stmt_ptr Parser::parse() {
+	auto stmt = parse_statement();
+	if (is_at_end() == false) {
+		throw std::runtime_error("Unexpected token found: " + peek().lexeme);
+	}
+	return stmt;
+}
 
 [[nodiscard]] stmt_ptr Parser::parse_statement() {
 	if (is_function_definition()) {
@@ -63,7 +65,6 @@ stmt_ptr Parser::parse_expression_statement() {
 	return std::make_unique<QueryStmt>(std::move(expr));
 }
 
-// NOTE: current:
 // expression:= term (('+' | '-') term)*
 [[nodiscard]] expr_ptr Parser::parse_expression() {
 	auto left = parse_term();
@@ -71,24 +72,23 @@ stmt_ptr Parser::parse_expression_statement() {
 		char op = previous().lexeme[0];
 		auto right = parse_term();
 
-		left =
-			std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
+		left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
 	}
 	return left;
 }
 
-// term:= factor (('*' | '/') factor)*
+// term:= unary (('*' | '/') unary)*
 [[nodiscard]] expr_ptr Parser::parse_term() {
-	auto left = parse_factor();
+	auto left = parse_unary();
 	for (;;) {
 		if (match(token_type::Mul)) {
-			auto right = parse_factor();
+			auto right = parse_unary();
 			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
 		} else if (match(token_type::Div)) {
-			auto right = parse_factor();
+			auto right = parse_unary();
 			left = std::make_unique<BinaryExpr>(std::move(left), '/', std::move(right));
 		} else if (is_implicit_multiplication()) {
-			auto right = parse_factor();
+			auto right = parse_unary();
 			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
 		} else {
 			break;
@@ -97,22 +97,37 @@ stmt_ptr Parser::parse_expression_statement() {
 	return left;
 }
 
-[[deprecated("Not implemented")]] [[nodiscard]]
+// unary:= '-' power | power
 expr_ptr Parser::parse_unary() {
-	return nullptr;
+	if (match(token_type::Minus)) {
+		auto operand = parse_power();
+		return std::make_unique<UnaryExpr>('-', std::move(operand));
+	}
+	return parse_power();
 }
 
-// NOTE: for now just focus on numbers
-//  factor:= NUMBER | IDENT | '(' expression ')'
-// TODO: handle function calls
-// factor := NUMBER | IDENT ('(' expression ')')? | '(' expression ')'
+// power :=	factor ('^' factor)?
+[[nodiscard]] expr_ptr Parser::parse_power() {
+	auto left = parse_factor();
+	if (match(token_type::Power)) {
+		auto right = parse_factor();
+		left = std::make_unique<BinaryExpr>(std::move(left), '^', std::move(right));
+	}
+	return left;
+}
+
+//  factor := NUMBER | IDENT | function_call | '(' expression ')'
 [[nodiscard]] expr_ptr Parser::parse_factor() {
 	if (match(token_type::Number)) {
 		return std::make_unique<NumberExpr>(previous().value);
 	}
 
 	if (match(token_type::Ident)) {
-		return std::make_unique<VariableExpr>(previous().lexeme);
+		std::string_view name = previous().lexeme;
+		if (peek().type == token_type::LParen) {
+			return parse_function_call(name);
+		}
+		return std::make_unique<VariableExpr>(name);
 	}
 
 	if (match(token_type::LParen)) {
@@ -121,6 +136,14 @@ expr_ptr Parser::parse_unary() {
 		return expr;
 	}
 	throw std::runtime_error("Expected expression");
+}
+
+// function_call := IDENT '(' expression ')'
+[[nodiscard]] expr_ptr Parser::parse_function_call(std::string_view name) {
+	consume(token_type::LParen, "Expected '('");
+	auto args = parse_expression();
+	consume(token_type::RParen, "Expected ')'");
+	return std::make_unique<FunctionCallExpr>(name, std::move(args));
 }
 
 //=============================================================================
@@ -202,6 +225,21 @@ void ASTPrinter::print_statement(const Statement *stmt, size_t level) {
 
 		std::cout << "Assignment(" << assign->name << ")\n";
 		print_expression(assign->value.get(), level + 1);
+		return;
+	}
+	if (auto function = dynamic_cast<const FunctionDefStmt *>(stmt)) {
+		indent(level);
+
+		std::cout << "Function('" << function->name
+				  << "(" << function->parameter << ")" << "')\n";
+		print_expression(function->body.get(), level + 1);
+		return;
+	}
+	if (auto expr = dynamic_cast<const ExpressionStmt *>(stmt)) {
+		indent(level);
+
+		std::cout << "Expression:\n";
+		print_expression(expr->expr.get(), level + 1);
 		return;
 	}
 	std::cout << "Unknown statement\n";

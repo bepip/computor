@@ -25,8 +25,9 @@ using stmt_ptr = std::unique_ptr<Statement>;
 class NumberExpr : public Expression {
   public:
 	double value;
+
 	NumberExpr(double value) :
-		value(value) {};
+		value(value) {}
 };
 
 class VariableExpr : public Expression {
@@ -34,7 +35,17 @@ class VariableExpr : public Expression {
 	std::string name;
 
 	VariableExpr(std::string_view name) :
-		name(name) {};
+		name(name) {}
+};
+
+class UnaryExpr : public Expression {
+  public:
+	char op;
+	expr_ptr operand;
+
+	UnaryExpr(char op, expr_ptr operand) :
+		op(op),
+		operand(std::move(operand)) {}
 };
 
 class BinaryExpr : public Expression {
@@ -46,7 +57,7 @@ class BinaryExpr : public Expression {
 	BinaryExpr(expr_ptr left, char op, expr_ptr right) :
 		left(std::move(left)),
 		op(op),
-		right(std::move(right)) {};
+		right(std::move(right)) {}
 };
 
 class FunctionCallExpr : public Expression {

@@ -119,17 +119,14 @@
 
 
 			term :=
-				power (('*' | '/') power)*
-
-
-			power :=
-				unary ('^' unary)*
-
+				unary (('*' | '/' | implicit_mul) unary)*
 
 			unary :=
-				  '-' unary
-				| factor
+				  '-' power
+				| power
 
+			power :=
+				factor ('^' factor)?
 
 			factor :=
 				  NUMBER
