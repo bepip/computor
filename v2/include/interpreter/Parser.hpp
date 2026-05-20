@@ -16,10 +16,7 @@ class Parser {
 
   private:
 	[[nodiscard]] stmt_ptr parse_statement();
-	[[nodiscard]] stmt_ptr parse_assignment();
-	[[nodiscard]] stmt_ptr parse_function_definition();
-	[[nodiscard]] stmt_ptr parse_expression_statement();
-	[[nodiscard]] stmt_ptr parse_query_statement();
+	[[nodiscard]] stmt_ptr parse_assignment_or_function_definition(expr_ptr left, expr_ptr right);
 
 	[[nodiscard]] expr_ptr parse_expression();
 	[[nodiscard]] expr_ptr parse_term();
@@ -34,9 +31,6 @@ class Parser {
 	const Token &consume(token_type type, std::string_view message);
 
 	[[nodiscard]] bool match(token_type t);
-
-	[[nodiscard]] bool is_assignment() const;
-	[[nodiscard]] bool is_function_definition() const;
 
 	[[nodiscard]] bool is_implicit_multiplication() const;
 };

@@ -59,8 +59,8 @@
 	- Radian computation for angles
 	- Function composition: F(G(x))
 	- Norm computation
-	- Display stored variables
-	- History of commands + results
+	- Display stored variables		=> seems easy
+	- History of commands + results => seems easy
 	- Matrix inversion
 	- add vectors
 	- whatever i want
@@ -92,18 +92,12 @@
 	- Parser: transform the tokens into an abstract syntax tree
 		* Grammar:
 			statement :=
-				  function_definition
-				| assignment
-				| expression_statement
-
-			function_definition :=
-				IDENT '(' IDENT ')' '=' expression
-
-			assignment :=
-				IDENT '=' expression
-
-			expression_statement :=
-				expression ('=' '?')?
+				expression
+				(
+					  '=' '?'
+					| '=' expression '?'
+					| '=' expression
+				)?
 
 			expression :=
 				term (('+' | '-') term)*
@@ -125,4 +119,4 @@
 				| '(' expression ')'
 
 			function_call :=
-				IDENT '(' expression ')'
+				IDENT '(' expression ')' // NOTE: might be possible to change expression to NUMBER

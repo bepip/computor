@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 
 class ASTNode {
   public:
@@ -100,10 +101,20 @@ class ExpressionStmt : public Statement {
 		expr(std::move(expr)) {}
 };
 
-class QueryStmt : public Statement {
+class EvalStmt : public Statement {
   public:
 	expr_ptr expr;
 
-	QueryStmt(expr_ptr expr) :
+	EvalStmt(expr_ptr expr) :
 		expr(std::move(expr)) {}
+};
+
+class SolveStmt : public Statement {
+  public:
+	expr_ptr left;
+	expr_ptr right;
+
+	SolveStmt(expr_ptr left, expr_ptr right) :
+		left(std::move(left)),
+		right(std::move(right)) {}
 };

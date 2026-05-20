@@ -17,58 +17,44 @@ Parser::Parser(std::vector<Token> tokens) :
 }
 
 [[nodiscard]] stmt_ptr Parser::parse_statement() {
-	if (is_function_definition()) {
-		return parse_function_definition();
+	auto left = parse_expression();
+
+	// regular expression
+	if (!match(token_type::Assign)) {
+		return std::make_unique<ExpressionStmt>(std::move(left));
 	}
-	if (is_assignment()) {
-		return parse_assignment();
+
+	// evaluation: expression '=' '?'
+	if (match(token_type::Query)) {
+		return std::make_unique<EvalStmt>(std::move(left));
 	}
-	return parse_expression_statement();
-}
 
-// an assignment only consists of IDENT '=' expression
-[[nodiscard]] stmt_ptr Parser::parse_assignment() {
-	const Token &name = consume(token_type::Ident, "Expected identifier");
-	consume(token_type::Assign, "Expected '='");
-	expr_ptr expr = parse_expression();
-	return std::make_unique<AssignmentStmt>(name.lexeme, std::move(expr));
-}
+	auto right = parse_expression();
 
-// IDENT '(' IDENT ')' '=' expression
-[[nodiscard]]
-stmt_ptr Parser::parse_function_definition() {
-	const Token &name = consume(token_type::Ident, "Expected identifier");
-	consume(token_type::LParen, "Expected '(");
-	const Token &parameter = consume(token_type::Ident, "Expected identifier");
-	consume(token_type::RParen, "Expected ')'");
-	consume(token_type::Assign, "Expected '='");
-	auto expr = parse_expression();
-	return std::make_unique<FunctionDefStmt>(name.lexeme, parameter.lexeme, std::move(expr));
-}
-
-// TODO: for later: handle function resolution where '=' and '?' don't follow each other
-//		 ex: f(x) = 25x + 3 ?
-
-// expression_statement:= expression ('=' '?')?
-[[nodiscard]]
-stmt_ptr Parser::parse_expression_statement() {
-	auto expr = parse_expression();
-	if (peek().type == token_type::Assign && peek(1).type == token_type::Query) {
-		consume(token_type::Assign, "Expected '=' before '?'");
-		consume(token_type::Query, "Expected '?' after '='");
-		return std::make_unique<QueryStmt>(std::move(expr));
+	// expression = expression '?'
+	if (match(token_type::Query)) {
+		return std::make_unique<SolveStmt>(std::move(left), std::move(right));
 	}
-	return std::make_unique<ExpressionStmt>(std::move(expr));
+
+	// expression = expression
+	return parse_assignment_or_function_definition(std::move(left), std::move(right));
 }
 
-// query_stmt:= expression '=' '?'
-[[nodiscard]] [[deprecated("this is handled in parse_expression_statement")]]
-stmt_ptr Parser::parse_query_statement() {
-	auto expr = parse_expression();
-	consume(token_type::Assign, "Expected '=' before '?'");
-	consume(token_type::Query, "Expected '?' after '='");
+[[nodiscard]] stmt_ptr Parser::parse_assignment_or_function_definition(expr_ptr left, expr_ptr right) {
+	if (auto var = dynamic_cast<VariableExpr *>(left.get())) {
+		return std::make_unique<AssignmentStmt>(var->name, std::move(right));
+	}
 
-	return std::make_unique<QueryStmt>(std::move(expr));
+	if (auto function = dynamic_cast<FunctionCallExpr *>(left.get())) {
+
+		if (auto parameter = dynamic_cast<VariableExpr *>(function->argument.get())) {
+			return std::make_unique<FunctionDefStmt>(function->name,
+													 parameter->name,
+													 std::move(right));
+		}
+		throw std::runtime_error("Invalid function definition target");
+	}
+	throw std::runtime_error("Invalid assignment target");
 }
 
 // expression:= term (('+' | '-') term)*
@@ -182,19 +168,6 @@ bool Parser::match(token_type t) {
 	}
 	++pos;
 	return true;
-}
-
-[[nodiscard]] bool Parser::is_assignment() const {
-	return peek().type == token_type::Ident &&
-		   peek(1).type == token_type::Assign;
-}
-
-[[nodiscard]] bool Parser::is_function_definition() const {
-	return peek().type == token_type::Ident &&
-		   peek(1).type == token_type::LParen &&
-		   peek(2).type == token_type::Ident &&
-		   peek(3).type == token_type::RParen &&
-		   peek(4).type == token_type::Assign;
 }
 
 // NOTE:we have an implicit multiplication when:

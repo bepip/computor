@@ -22,6 +22,19 @@ namespace {
 	void welcome_message() {
 		printf("\tWelcome to my math interpreter\n");
 	}
+
+	bool handle_line(std::string_view line) {
+		if (line == "help") {
+			show_help();
+			return true;
+		}
+		if (line == "list") {
+			printf("stored values:\n");
+			printf("not implemented\n");
+			return true;
+		}
+		return false;
+	}
 } // namespace
 
 void start_repl() {
@@ -35,8 +48,7 @@ void start_repl() {
 			printf("\nBye!\n");
 			break;
 		}
-		if (line == "help") {
-			show_help();
+		if (handle_line(line)) {
 			continue;
 		}
 		try {
