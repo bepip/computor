@@ -30,6 +30,7 @@ namespace {
 
 	std::vector<token_test> setup_tokenize_test() {
 		std::vector<token_test> tests;
+		tests.reserve(10);
 
 		auto add_test_case = [&](std::string_view input, std::vector<Token> et) {
 			tests.emplace_back(token_test{std::string(input), et});
@@ -63,10 +64,10 @@ namespace {
 							   {token_type::End, "", 0},
 						   });
 		add_test_case("Aasdasdasd i", {
-							   {token_type::Ident, "Aasdasdasd", 0},
-							   {token_type::Imag, "i", 0},
-							   {token_type::End, "", 0},
-						   });
+										  {token_type::Ident, "Aasdasdasd", 0},
+										  {token_type::Imag, "i", 0},
+										  {token_type::End, "", 0},
+									  });
 		add_test_case("...", {
 								 {token_type::Invalid, ".", 0},
 								 {token_type::Invalid, ".", 0},
@@ -95,6 +96,6 @@ namespace {
 test_result test_lexer() {
 	print_title("Lexer");
 	const auto &result = test_tokenize();
-	print_result(result.failed, result.total);
+	print_result(result);
 	return result;
 }

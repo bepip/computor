@@ -11,10 +11,14 @@ void print_test(size_t count, std::string_view msg, const case_result &cr) {
 }
 
 void print_title(std::string_view title) {
-	std::cout << "Testing " << title << std::endl << std::endl;
+	std::cout << "Testing " << title << std::endl
+			  << std::endl;
 }
 
-void print_result(size_t failed, size_t total) {
+void print_result(test_result result) {
+	size_t total = result.total;
+	size_t failed = result.failed;
+
 	std::cout << "-------------------------------------------" << std::endl;
 	std::cout << "[" << total - failed << "/" << total << "] "
 			  << (failed == 0 ? "Passed ✅" : "Failed ❌") << std::endl;

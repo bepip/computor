@@ -16,6 +16,12 @@
 struct test_result {
 	size_t failed;
 	size_t total;
+
+	test_result &operator+=(const test_result &rhs) {
+		failed += rhs.failed;
+		total += rhs.total;
+		return *this;
+	}
 };
 
 struct case_result {
@@ -26,5 +32,5 @@ struct case_result {
 test_result test_lexer();
 
 void print_title(std::string_view title);
-void print_test(size_t count, std::string_view msg, const case_result& cr);
-void print_result(size_t failed, size_t total);
+void print_test(size_t count, std::string_view msg, const case_result &cr);
+void print_result(test_result result);
