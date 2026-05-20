@@ -58,6 +58,9 @@ Token Lexer::next_token() {
 		case '=':
 			advance();
 			return {token_type::Assign, "=", 0};
+		case '?':
+			advance();
+			return {token_type::Query, "?", 0};
 	}
 	advance();
 	return {token_type::Invalid, std::string(1, curr), 0};

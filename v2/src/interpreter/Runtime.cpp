@@ -1,6 +1,7 @@
 #include "../../include/interpreter/Runtime.hpp"
 #include "../../include/interpreter/Lexer.hpp"
 #include "../../include/interpreter/Parser.hpp"
+#include "../../include/interpreter/ASTPrinter.hpp"
 #include "../../include/mathlib/Value.hpp"
 #include <string_view>
 

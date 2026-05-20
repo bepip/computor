@@ -30,7 +30,8 @@ void start_repl() {
 
 	while (true) {
 		std::string line = read_line("> ");
-		if (str::to_lower(line) == "quit" || str::to_lower(line) == "q") {
+		if (str::to_lower(line) == "quit" || str::to_lower(line) == "q" ||
+			str::to_lower(line) == "exit") {
 			printf("\nBye!\n");
 			break;
 		}

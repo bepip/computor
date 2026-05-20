@@ -94,29 +94,19 @@
 			statement :=
 				  function_definition
 				| assignment
-				| query_statement
 				| expression_statement
-
 
 			function_definition :=
 				IDENT '(' IDENT ')' '=' expression
 
-
 			assignment :=
 				IDENT '=' expression
 
-
-			query_statement :=
-				expression '=' '?'
-
-
 			expression_statement :=
-				expression
-
+				expression ('=' '?')?
 
 			expression :=
 				term (('+' | '-') term)*
-
 
 			term :=
 				unary (('*' | '/' | implicit_mul) unary)*
@@ -126,14 +116,13 @@
 				| power
 
 			power :=
-				factor ('^' factor)?
+				factor ('^' power)?
 
 			factor :=
 				  NUMBER
 				| IDENT
 				| function_call
 				| '(' expression ')'
-
 
 			function_call :=
 				IDENT '(' expression ')'
