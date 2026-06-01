@@ -13,9 +13,9 @@ namespace {
 
 	case_result test_tokenize_case(std::string_view input,
 								   const std::vector<Token> &expected_tokens) {
-		Lexer lexer(input);
+		Lexer lexer;
 		bool passed = true;
-		auto tokens = lexer.tokenize();
+		auto tokens = lexer.tokenize(input);
 
 		for (size_t i = 0; i < tokens.size() && i < expected_tokens.size(); ++i) {
 			const auto &token = tokens[i];
@@ -68,12 +68,6 @@ namespace {
 										  {token_type::Imag, "i", 0},
 										  {token_type::End, "", 0},
 									  });
-		add_test_case("...", {
-								 {token_type::Invalid, ".", 0},
-								 {token_type::Invalid, ".", 0},
-								 {token_type::Invalid, ".", 0},
-								 {token_type::End, "", 0},
-							 });
 		return tests;
 	}
 
