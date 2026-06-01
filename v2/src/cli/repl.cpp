@@ -1,5 +1,7 @@
+#include "../../include/common/error.hpp"
 #include "../../include/common/utils.hpp"
 #include "../../include/interpreter/Runtime.hpp"
+#include "../../include/interpreter/error/InterpreterError.hpp"
 #include <iostream>
 #include <string>
 
@@ -55,9 +57,10 @@ void start_repl() {
 			// Value result =
 			runtime.execute(line);
 			// result.print();
+		} catch (const InterpreterError &e) {
+			std::cout << format_error(e) << "\n";
 		} catch (const std::exception &e) {
-			std::cout << "Error: " << e.what() << std::endl;
-			// print_error(e.what());
+			std::cerr << "Unexpected error: " << e.what() << "\n";
 		}
 	}
 }

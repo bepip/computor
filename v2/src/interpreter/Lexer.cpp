@@ -1,4 +1,5 @@
 #include "../../include/interpreter/Lexer.hpp"
+#include "../../include/interpreter/error/InterpreterError.hpp"
 #include <cctype>
 #include <iostream>
 #include <string>
@@ -59,8 +60,7 @@ Token Lexer::next_token() {
 			advance();
 			return {token_type::Query, "?", 0};
 	}
-	advance();
-	return {token_type::Invalid, std::string(1, curr), 0};
+	throw InterpreterError("Lexer", "Invalid token: " + std::string(1, curr));
 }
 
 void Lexer::advance() {
@@ -87,7 +87,7 @@ Token Lexer::number() {
 	}
 	std::string num_str = src.substr(start, pos - start);
 	if (num_str == "." || num_str.back() == '.') {
-		return {token_type::Invalid, num_str, 0};
+		throw InterpreterError("Lexer", "Invalid token: " + num_str);
 	}
 	return {
 		token_type::Number,
@@ -152,8 +152,6 @@ std::string Token::to_string() const {
 			return "QUERY('" + lexeme + "')";
 		case token_type::End:
 			return "EOF";
-		case token_type::Invalid:
-			return "INVALID_TOKEN('" + lexeme + "')";
 	}
 	return "INVALID_TOKEN('" + lexeme + "')";
 }

@@ -18,7 +18,6 @@ enum class token_type {
 	RParen,
 	Query,
 	End,
-	Invalid
 };
 
 struct Token {

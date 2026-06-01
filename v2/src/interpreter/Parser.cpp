@@ -1,6 +1,6 @@
 #include "../../include/interpreter/Parser.hpp"
+#include "../../include/interpreter/error/InterpreterError.hpp"
 #include <memory>
-#include <stdexcept>
 #include <string_view>
 #include <vector>
 
@@ -9,7 +9,7 @@
 	this->tokens = std::move(tokens);
 	auto stmt = parse_statement();
 	if (is_at_end() == false) {
-		throw std::runtime_error("Unexpected token found: " + peek().lexeme);
+		throw InterpreterError("Parser", "Unexpected token found: " + peek().lexeme);
 	}
 	return stmt;
 }
@@ -50,9 +50,9 @@
 													 parameter->name,
 													 std::move(right));
 		}
-		throw std::runtime_error("Invalid function definition target");
+		throw InterpreterError("Parser", "Invalid function definition target");
 	}
-	throw std::runtime_error("Invalid assignment target");
+	throw InterpreterError("Parser", "Invalid assignment target");
 }
 
 // expression:= term (('+' | '-') term)*
@@ -125,7 +125,7 @@ expr_ptr Parser::parse_unary() {
 		consume(token_type::RParen, "Expected ')'");
 		return expr;
 	}
-	throw std::runtime_error("Expected expression");
+	throw InterpreterError("Parser", "Expected expression");
 }
 
 // function_call := IDENT '(' expression ')'
@@ -155,7 +155,7 @@ expr_ptr Parser::parse_unary() {
 
 [[nodiscard]] const Token &Parser::consume(token_type type, std::string_view message) {
 	if (type != peek().type) {
-		throw std::runtime_error(std::string(message));
+		throw InterpreterError("Parser", std::string(message));
 	}
 	return tokens[pos++];
 }

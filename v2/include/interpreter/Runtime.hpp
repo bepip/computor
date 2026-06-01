@@ -15,8 +15,8 @@ class Runtime {
 
   private:
 	Context context;
-	Parser parser;
 	Lexer lexer;
+	Parser parser;
 	SemanticAnalyzer semantic;
 	std::vector<std::string> _history;
 };
