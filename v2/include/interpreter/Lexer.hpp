@@ -34,12 +34,11 @@ struct Token {
 
 class Lexer {
   private:
-	std::string src;
-	size_t pos;
+	std::string src = "";
+	size_t pos = 0;
 
   public:
-	explicit Lexer(std::string_view input);
-	std::vector<Token> tokenize();
+	std::vector<Token> tokenize(std::string_view input);
 
   private:
 	char current_char() const;

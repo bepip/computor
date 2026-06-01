@@ -4,11 +4,9 @@
 #include <string_view>
 #include <vector>
 
-Parser::Parser(std::vector<Token> tokens) :
-	tokens(std::move(tokens)),
-	pos(0) {}
-
-[[nodiscard]] stmt_ptr Parser::parse() {
+[[nodiscard]] stmt_ptr Parser::parse(std::vector<Token> tokens) {
+	pos = 0;
+	this->tokens = std::move(tokens);
 	auto stmt = parse_statement();
 	if (is_at_end() == false) {
 		throw std::runtime_error("Unexpected token found: " + peek().lexeme);

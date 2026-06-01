@@ -1,26 +1,25 @@
 #include "../../include/interpreter/Runtime.hpp"
+#include "../../include/interpreter/ASTPrinter.hpp"
 #include "../../include/interpreter/Lexer.hpp"
 #include "../../include/interpreter/Parser.hpp"
-#include "../../include/interpreter/ASTPrinter.hpp"
 #include "../../include/mathlib/Value.hpp"
 #include <string_view>
 
+Runtime::Runtime() :
+	semantic(context) {}
+
 Value Runtime::execute(std::string_view line) {
-	Lexer lexer(line);
-	auto tokens = lexer.tokenize();
+	auto tokens = lexer.tokenize(line);
 
-	for (const auto &token : tokens) {
-		token.print();
-	}
+	// for (const auto &token : tokens) {
+	// 	token.print();
+	// }
 
-	Parser parser(tokens);
-	auto ast = parser.parse();
+	auto ast = parser.parse(tokens);
 	ASTPrinter::print(ast.get());
+
+	// sem.check(ast.get());
 	//
-	// SemanticAnalyzer sem(symbols);
-	// sem.check(ast);
-	//
-	// Evaluator eval(symbols);
-	// return eval.evaluate();
+	// return evaluator.evaluate(ast.get());
 	return {};
 }

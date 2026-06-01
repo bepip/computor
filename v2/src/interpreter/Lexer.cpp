@@ -5,12 +5,9 @@
 #include <string_view>
 #include <vector>
 
-Lexer::Lexer(std::string_view input) {
+std::vector<Token> Lexer::tokenize(std::string_view input) {
 	src = input;
 	pos = 0;
-}
-
-std::vector<Token> Lexer::tokenize() {
 	std::vector<Token> tokens;
 
 	Token t;

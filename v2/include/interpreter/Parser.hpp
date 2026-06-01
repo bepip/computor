@@ -7,12 +7,11 @@
 
 class Parser {
   private:
-	std::vector<Token> tokens;
-	size_t pos;
+	std::vector<Token> tokens = {};
+	size_t pos = 0;
 
   public:
-	explicit Parser(std::vector<Token> tokens);
-	[[nodiscard]] stmt_ptr parse();
+	[[nodiscard]] stmt_ptr parse(std::vector<Token> tokens);
 
   private:
 	[[nodiscard]] stmt_ptr parse_statement();
