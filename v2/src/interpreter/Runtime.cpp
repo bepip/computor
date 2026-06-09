@@ -6,7 +6,8 @@
 #include <string_view>
 
 Runtime::Runtime() :
-	semantic(context) {}
+	semantic(context),
+	evaluator(context) {}
 
 Value Runtime::execute(std::string_view line) {
 	auto tokens = lexer.tokenize(line);

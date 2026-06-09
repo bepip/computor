@@ -1,9 +1,9 @@
 #include "../../include/cli/Repl.hpp"
 #include "../../include/common/error.hpp"
-#include "../../include/common/utils.hpp"
 #include "../../include/interpreter/Runtime.hpp"
 #include "../../include/interpreter/error/InterpreterError.hpp"
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <string_view>
@@ -32,14 +32,13 @@ Repl::~Repl() {
 void Repl::run() {
 	welcome_message();
 
-	while (true) {
+	while (running) {
 		std::string line = read_line("> ");
-		_history.push_back(line);
-		if (str::to_lower(line) == "quit") {
-			printf("\nBye!\n");
-			break;
+		if (line != "history") {
+			_history.push_back(line);
 		}
-		if (handle_commands(line)) {
+		if (is_command(line)) {
+			execute_command(line);
 			continue;
 		}
 		try {
@@ -70,34 +69,37 @@ void Repl::help() const {
 	printf(" commands:\n");
 	printf("  help\t\tprints this menu\n");
 	printf("  history\tprints command history\n");
-	printf("  var\t\tprints command history\n");
+	printf("  clear_history\tclears history\n");
+	printf("  vars\t\tprints saved variables\n");
 	printf("  quit\t\tquit program\n");
 }
 
 void Repl::welcome_message() const {
 	printf("\tWelcome to my math interpreter\n");
 	help();
+	printf("\n");
 }
 
-void Repl::print_vars() const {
+void Repl::vars() const {
 	printf("Not impemented yet\n");
 }
 
-bool Repl::handle_commands(std::string_view line) {
-	if (line == "help") {
-		help();
-		return true;
+void Repl::history() const {
+	size_t count(1);
+	for (auto line : _history) {
+		std::cout << count++ << " " << line << std::endl;
 	}
-	if (line == "var") {
-		print_vars();
-		return true;
-	}
-	if (line == "history") {
-		size_t count(0);
-		for (auto line : _history) {
-			std::cout << count++ << " " << line << std::endl;
-		}
-		return true;
-	}
-	return false;
+}
+
+void Repl::clear_history() {
+	_history.clear();
+	std::ofstream file(".history", std::ios::out | std::ios::trunc);
+}
+
+bool Repl::is_command(std::string_view line) const {
+	return commands.find(std::string(line)) != commands.end();
+}
+
+void Repl::execute_command(std::string_view command) {
+	commands[std::string(command)]();
 }

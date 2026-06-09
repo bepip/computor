@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../include/mathlib/Value.hpp"
+#include "Evaluator.hpp"
 #include "Lexer.hpp"
 #include "Parser.hpp"
 #include "SemanticAnalyzer.hpp"
@@ -18,5 +19,6 @@ class Runtime {
 	Lexer lexer;
 	Parser parser;
 	SemanticAnalyzer semantic;
+	Evaluator evaluator;
 	std::vector<std::string> _history;
 };
