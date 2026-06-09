@@ -17,7 +17,7 @@ TEST_DIR = tests/
 
 OBJ_DIR = obj/
 
-CLI = repl.cpp
+CLI = Repl.cpp
 INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp ASTPrinter.cpp SemanticAnalyzer.cpp
 MATHLIB = Value.cpp math_utils.cpp Complex.cpp
 COMMON = utils.cpp error.cpp
