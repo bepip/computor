@@ -31,7 +31,7 @@ namespace {
 		// }
 	}
 
-	std::optional<test_result> handle_tests(int ac, char *av[]) {
+	std::optional<test_result> test_handler(int ac, char *av[]) {
 		test_result results = {};
 
 		if (ac == 1) {
@@ -50,7 +50,7 @@ namespace {
 } // namespace
 
 int main(int ac, char *av[]) {
-	auto result = handle_tests(ac, av);
+	auto result = test_handler(ac, av);
 	if (result.has_value()) {
 		size_t total = result.value().total;
 		size_t failed = result.value().failed;
