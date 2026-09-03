@@ -10,6 +10,11 @@ void print_test(size_t count, std::string_view msg, const case_result &cr) {
 	std::cout << std::endl;
 }
 
+void print_test(size_t count, std::string_view msg, bool passed){
+	std::cout << "[" << count << "]" << (passed ? "✅" : "❌") << ": '" << msg << "'";
+	std::cout << std::endl;
+}
+
 void print_title(std::string_view title) {
 	std::cout << "Testing " << title << std::endl
 			  << std::endl;

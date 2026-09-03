@@ -1,6 +1,7 @@
 #include "../../include/mathlib/Rational.hpp"
 #include <charconv>
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <numeric>
 #include <ostream>
@@ -95,7 +96,7 @@ Rational Rational::operator/(const Rational &rhs) const {
 
 // TODO: write function body
 Rational Rational::operator%(const Rational &rhs) const {
-	(void) rhs;
+	(void)rhs;
 	return {};
 }
 
@@ -161,8 +162,8 @@ void Rational::normalize() {
 		return;
 	}
 	if (denominator < 0) {
-		numerator -= numerator;
-		denominator -= denominator;
+		numerator *= -1;
+		denominator *= -1;
 	}
 
 	auto divisor = std::gcd(numerator, denominator);

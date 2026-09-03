@@ -29,7 +29,9 @@ struct case_result {
 	size_t fail_index;
 };
 
+//TODO: add all math tests in a single function
 test_result test_lexer();
+test_result test_rational();
 
 void print_title(std::string_view title);
 void print_test(size_t count, std::string_view msg, const case_result &cr);

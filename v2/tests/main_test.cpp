@@ -11,6 +11,7 @@ namespace {
 	void help() {
 		std::cout << "run lexer tests with -l." << std::endl;
 		std::cout << "run parser tests with -p." << std::endl;
+		std::cout << "run math tests with -m." << std::endl;
 	}
 
 	void run_test(test_result &results, test_result (*f)()) {
@@ -19,12 +20,17 @@ namespace {
 
 	void run_all_tests(test_result &results) {
 		run_test(results, test_lexer);
+		std::cout << "-------------------------------------------" << std::endl;
+		run_test(results, test_rational);
 		// run_test(test_parser);
 	}
 
 	void run_tests_with_opt(test_result &results, const std::vector<std::string_view> &args) {
 		if (contains(args, "-l")) {
 			run_test(results, test_lexer);
+		}
+		if (contains(args, "-l")) {
+			run_test(results, test_rational);
 		}
 		// if (contains(args, "-p")) {
 		// 	run_test(results, test_parser);
