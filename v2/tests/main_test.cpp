@@ -29,7 +29,7 @@ namespace {
 		if (contains(args, "-l")) {
 			run_test(results, test_lexer);
 		}
-		if (contains(args, "-l")) {
+		if (contains(args, "-m")) {
 			run_test(results, test_rational);
 		}
 		// if (contains(args, "-p")) {
