@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-// TODO:: find a way to output the tests better than this
 namespace {
 	enum sign {
 		equal,
