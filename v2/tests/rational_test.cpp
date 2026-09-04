@@ -102,15 +102,6 @@ namespace {
 		return tests;
 	}
 
-	// enum sign {
-	// 	equal,
-	// 	not_equal,
-	// 	greater,
-	// 	greater_eq,
-	// 	less,
-	// 	less_eq,
-	// };
-
 	bool test_rational_case(const test_case &c) {
 		Rational input = c.input;
 		Rational expected = c.expected;
