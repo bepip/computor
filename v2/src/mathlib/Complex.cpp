@@ -1,15 +1,16 @@
 #include "../../include/mathlib/Complex.hpp"
-#include "../../include/mathlib/math_utils.hpp"
 
-Complex::Complex(double r, double i) :
-	_real(math::normalize_zero(r)),
-	_imag(math::normalize_zero(i)) {};
+Complex::Complex(Rational r, Rational i) :
+	// _real(math::normalize_zero(r)),
+	// _imag(math::normalize_zero(i)) {};
+	_real(r),
+	_imag(i) {};
 
-double Complex::real() const {
+Rational Complex::real() const {
 	return _real;
 }
 
-double Complex::imag() const {
+Rational Complex::imag() const {
 	return _imag;
 }
 
@@ -22,5 +23,7 @@ std::ostream &operator<<(std::ostream &out, const Complex &c) {
 }
 
 bool Complex::operator==(const Complex &other) const {
-	return math::near_equal(_real, other._real) && math::near_equal(_imag, other._imag);
+	// return math::near_equal(_real, other._real) && math::near_equal(_imag,
+	// other._imag);
+	return _real == other._real && _imag == other._imag;
 }
