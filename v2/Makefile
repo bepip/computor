@@ -20,7 +20,7 @@ OBJ_DIR = obj/
 CLI = Repl.cpp
 INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp ASTPrinter.cpp \
 			  SemanticAnalyzer.cpp Evaluator.cpp
-MATHLIB = Value.cpp math_utils.cpp Complex.cpp Rational.cpp
+MATHLIB = Value.cpp math_utils.cpp Complex.cpp Rational.cpp Matrix.cpp
 COMMON = utils.cpp error.cpp
 MAIN = main.cpp
 TEST = lexer_test.cpp main_test.cpp tests_utils.cpp rational_test.cpp
