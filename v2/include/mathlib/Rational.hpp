@@ -9,7 +9,7 @@ class Rational {
 	std::intmax_t denominator;
 
   public:
-	Rational(std::intmax_t numerator = 0, std::intmax_t denominator = 0);
+	Rational(std::intmax_t numerator = 0, std::intmax_t denominator = 1);
 	Rational(std::string decimal);
 
 	std::intmax_t get_numerator() const;
