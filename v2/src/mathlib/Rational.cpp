@@ -149,7 +149,11 @@ bool Rational::operator>=(const Rational &rhs) const {
 }
 
 std::ostream &operator<<(std::ostream &out, const Rational &r) {
-	out << r.get_numerator() << " / " << r.get_denominator();
+	if (r.get_denominator() == 1) {
+		out << r.get_numerator();
+	} else {
+		out << r.get_numerator() << " / " << r.get_denominator();
+	}
 	return out;
 }
 
