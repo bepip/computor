@@ -2,6 +2,7 @@
 
 #include "Rational.hpp"
 #include <cstddef>
+#include <ostream>
 #include <vector>
 
 class Matrix {

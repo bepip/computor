@@ -9,7 +9,7 @@ class Complex {
 	Rational _imag;
 
   public:
-	explicit Complex(Rational r = {1, 0}, Rational i = {1, 0});
+	explicit Complex(Rational r = {0}, Rational i = {0});
 	Rational real() const;
 	Rational imag() const;
 
