@@ -151,11 +151,9 @@ bool Rational::operator>=(const Rational &rhs) const {
 
 std::ostream &operator<<(std::ostream &out, const Rational &r) {
 	if (r.denominator() == 1) {
-		out << r.numerator();
-	} else {
-		out << r.numerator() << " / " << r.denominator();
+		return out << r.numerator();
 	}
-	return out;
+	return out << r.numerator() << "/" << r.denominator();
 }
 
 void Rational::normalize() {
