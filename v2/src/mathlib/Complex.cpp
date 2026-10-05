@@ -14,6 +14,67 @@ Rational Complex::imag() const {
 	return _imag;
 }
 
+Complex Complex::conjugate() const {
+	return {_real, -_imag};
+}
+
+Rational Complex::squared_modulus() const {
+	return Rational(_real * _real + _imag * _imag);
+}
+
+Complex Complex::operator+(const Complex &rhs) const {
+	return {_real + rhs._real, _imag + rhs._imag};
+}
+
+Complex Complex::operator-(const Complex &rhs) const {
+	return {_real - rhs._real, _imag - rhs._imag};
+}
+
+Complex Complex::operator*(const Complex &rhs) const {
+	const auto real = _real * rhs._real - _imag * rhs._imag;
+	const auto imag = _real * rhs._imag + _imag * rhs._real;
+	return {real, imag};
+}
+
+Complex Complex::operator/(const Complex &rhs) const {
+	const auto real_num = _real * rhs._real + _imag * rhs._imag;
+	const auto imag_num = _imag * rhs._real - _real * rhs._imag;
+	const auto denominator = rhs.squared_modulus();
+	return {real_num / denominator, imag_num / denominator};
+}
+
+Complex &Complex::operator+=(const Complex &rhs) {
+	*this = *this + rhs;
+	return *this;
+}
+
+Complex &Complex::operator-=(const Complex &rhs) {
+	*this = *this - rhs;
+	return *this;
+}
+
+Complex &Complex::operator*=(const Complex &rhs) {
+	*this = *this * rhs;
+	return *this;
+}
+
+Complex &Complex::operator/=(const Complex &rhs) {
+	*this = *this / rhs;
+	return *this;
+}
+
+Complex Complex::operator-() const {
+	return {-_real, -_imag};
+}
+
+bool Complex::operator==(const Complex &other) const {
+	return _real == other._real && _imag == other._imag;
+}
+
+bool Complex::operator!=(const Complex &rhs) const {
+	return !(*this == rhs);
+}
+
 std::ostream &operator<<(std::ostream &out, const Complex &c) {
 	const auto &real = c.real();
 	const auto &imag = c.imag();
@@ -44,10 +105,4 @@ std::ostream &operator<<(std::ostream &out, const Complex &c) {
 		out << magnitude << "i";
 	}
 	return out;
-}
-
-bool Complex::operator==(const Complex &other) const {
-	// return math::near_equal(_real, other._real) && math::near_equal(_imag,
-	// other._imag);
-	return _real == other._real && _imag == other._imag;
 }

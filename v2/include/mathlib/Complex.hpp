@@ -9,9 +9,12 @@ class Complex {
 	Rational _imag;
 
   public:
-	explicit Complex(Rational r = {0}, Rational i = {0});
+	Complex(Rational r = {0}, Rational i = {0});
 	Rational real() const;
 	Rational imag() const;
+
+	Complex conjugate() const;
+	Rational squared_modulus() const;
 
 	Complex operator+(const Complex &rhs) const;
 	Complex operator-(const Complex &rhs) const;
