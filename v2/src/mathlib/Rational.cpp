@@ -9,8 +9,8 @@
 #include <string>
 
 Rational::Rational(std::intmax_t numerator, std::intmax_t denominator) :
-	numerator(numerator),
-	denominator(denominator) {
+	_numerator(numerator),
+	_denominator(denominator) {
 	normalize();
 }
 
@@ -32,54 +32,55 @@ Rational::Rational(std::string decimal) {
 		throw std::overflow_error("Rational value is too large");
 	}
 
-	numerator = value;
-	denominator = 1;
+	_numerator = value;
+	_denominator = 1;
 	for (std::size_t i = 0; i < decimals_len; ++i) {
-		if (denominator > std::numeric_limits<std::intmax_t>::max() / 10) {
+		if (_denominator > std::numeric_limits<std::intmax_t>::max() / 10) {
 			throw std::overflow_error("Rational denominator is too large");
 		}
-		denominator *= 10;
+		_denominator *= 10;
 	}
 	normalize();
 }
 
-std::intmax_t Rational::get_numerator() const {
-	return numerator;
+std::intmax_t Rational::numerator() const {
+	return _numerator;
 }
 
-std::intmax_t Rational::get_denominator() const {
-	return denominator;
+std::intmax_t Rational::denominator() const {
+	return _denominator;
 }
 
 double Rational::to_double() const {
-	return static_cast<double>(numerator) / static_cast<double>(denominator);
+	return static_cast<double>(_numerator) / static_cast<double>(_denominator);
 }
 
 // TODO: replace all maths double to rational in all math files
 // check for overflows
 Rational Rational::operator+(const Rational &rhs) const {
-	unsigned long g = std::gcd(denominator, rhs.denominator);
-	std::intmax_t num = (numerator * rhs.denominator + rhs.numerator * denominator) / g;
-	std::intmax_t deno = denominator * rhs.denominator / g;
+	unsigned long g = std::gcd(_denominator, rhs._denominator);
+	std::intmax_t num =
+		(_numerator * rhs._denominator + rhs._numerator * _denominator) / g;
+	std::intmax_t deno = _denominator * rhs._denominator / g;
 	return {num, deno};
 }
 
 Rational Rational::operator-(const Rational &rhs) const {
-	unsigned long g = std::gcd(denominator, rhs.denominator);
-	auto left_multiplier = rhs.denominator / g;
-	auto right_multiplier = denominator / g;
-	std::intmax_t num = numerator * left_multiplier - rhs.numerator * right_multiplier;
-	std::intmax_t deno = denominator * left_multiplier;
+	unsigned long g = std::gcd(_denominator, rhs._denominator);
+	auto left_multiplier = rhs._denominator / g;
+	auto right_multiplier = _denominator / g;
+	std::intmax_t num = _numerator * left_multiplier - rhs._numerator * right_multiplier;
+	std::intmax_t deno = _denominator * left_multiplier;
 	return {num, deno};
 }
 
 Rational Rational::operator*(const Rational &rhs) const {
-	auto n1 = numerator;
-	auto d1 = denominator;
-	auto n2 = rhs.numerator;
-	auto d2 = rhs.denominator;
-	auto g1 = std::gcd(numerator, rhs.denominator);
-	auto g2 = std::gcd(rhs.numerator, denominator);
+	auto n1 = _numerator;
+	auto d1 = _denominator;
+	auto n2 = rhs._numerator;
+	auto d2 = rhs._denominator;
+	auto g1 = std::gcd(_numerator, rhs._denominator);
+	auto g2 = std::gcd(rhs._numerator, _denominator);
 	n1 /= g1;
 	d2 /= g1;
 	n2 /= g2;
@@ -89,7 +90,7 @@ Rational Rational::operator*(const Rational &rhs) const {
 }
 
 Rational Rational::operator/(const Rational &rhs) const {
-	Rational inverse(rhs.denominator, rhs.numerator);
+	Rational inverse(rhs._denominator, rhs._numerator);
 
 	return *this * inverse;
 }
@@ -121,11 +122,11 @@ Rational &Rational::operator/=(const Rational &rhs) {
 }
 
 Rational Rational::operator-() const {
-	return {-numerator, denominator};
+	return {-_numerator, _denominator};
 }
 
 bool Rational::operator==(const Rational &rhs) const {
-	return numerator == rhs.numerator && denominator == rhs.denominator;
+	return _numerator == rhs._numerator && _denominator == rhs._denominator;
 }
 
 bool Rational::operator!=(const Rational &rhs) const {
@@ -133,7 +134,7 @@ bool Rational::operator!=(const Rational &rhs) const {
 }
 
 bool Rational::operator<(const Rational &rhs) const {
-	return numerator * rhs.denominator < rhs.numerator * denominator;
+	return _numerator * rhs._denominator < rhs._numerator * _denominator;
 }
 
 bool Rational::operator<=(const Rational &rhs) const {
@@ -149,31 +150,31 @@ bool Rational::operator>=(const Rational &rhs) const {
 }
 
 std::ostream &operator<<(std::ostream &out, const Rational &r) {
-	if (r.get_denominator() == 1) {
-		out << r.get_numerator();
+	if (r.denominator() == 1) {
+		out << r.numerator();
 	} else {
-		out << r.get_numerator() << " / " << r.get_denominator();
+		out << r.numerator() << " / " << r.denominator();
 	}
 	return out;
 }
 
 void Rational::normalize() {
-	if (denominator == 0) {
+	if (_denominator == 0) {
 		throw std::domain_error("Rational: zero denomintor");
 	}
-	if (numerator == 0) {
-		denominator = 1;
+	if (_numerator == 0) {
+		_denominator = 1;
 		return;
 	}
-	if (denominator < 0) {
-		numerator *= -1;
-		denominator *= -1;
+	if (_denominator < 0) {
+		_numerator *= -1;
+		_denominator *= -1;
 	}
 
-	auto divisor = std::gcd(numerator, denominator);
+	auto divisor = std::gcd(_numerator, _denominator);
 
-	numerator /= divisor;
-	denominator /= divisor;
+	_numerator /= divisor;
+	_denominator /= divisor;
 }
 
 bool Rational::add_overflow() const {

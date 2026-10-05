@@ -5,15 +5,15 @@
 
 class Rational {
   private:
-	std::intmax_t numerator;
-	std::intmax_t denominator;
+	std::intmax_t _numerator;
+	std::intmax_t _denominator;
 
   public:
 	Rational(std::intmax_t numerator = 0, std::intmax_t denominator = 1);
 	Rational(std::string decimal);
 
-	std::intmax_t get_numerator() const;
-	std::intmax_t get_denominator() const;
+	std::intmax_t numerator() const;
+	std::intmax_t denominator() const;
 	double to_double() const;
 
 	Rational operator+(const Rational &rhs) const;
