@@ -6,7 +6,6 @@
 #include <string_view>
 
 Runtime::Runtime() :
-	semantic(context),
 	evaluator(context) {}
 
 Value Runtime::execute(std::string_view line) {
@@ -19,8 +18,6 @@ Value Runtime::execute(std::string_view line) {
 	auto ast = parser.parse(tokens);
 	ASTPrinter::print(ast.get());
 
-	// sem.check(ast.get());
-	//
 	// return evaluator.evaluate(ast.get());
 	return {};
 }

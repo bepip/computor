@@ -1,5 +1,6 @@
 #include "../../include/mathlib/Value.hpp"
+#include <iostream>
 
 void Value::print() const {
-	std::visit(Value::Visitor{}, data);
+	std::visit([](const auto &value) { std::cout << value << std::endl; }, data);
 }

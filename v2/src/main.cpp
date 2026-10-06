@@ -4,6 +4,10 @@
 #include <vector>
 
 int main(int ac, char *av[]) {
+	Rational r;
+	Matrix m(2,2);
+	Complex c(2,-2);
+	
 	if (ac == 1) {
 		Repl repl;
 		repl.run();

@@ -7,6 +7,8 @@ INC = -Iinclude
 
 FLAGS = -Werror -Wextra -Wall -Wpedantic -Wconversion -g -O3 -std=c++17
 
+HISTORY_FILE = .history
+
 SRC_DIR = ./src/
 CLI_DIR = cli/
 INTERPRETER_DIR = interpreter/
@@ -19,7 +21,7 @@ OBJ_DIR = obj/
 
 CLI = Repl.cpp
 INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp ASTPrinter.cpp \
-			  SemanticAnalyzer.cpp Evaluator.cpp
+			  Evaluator.cpp
 MATHLIB = Value.cpp math_utils.cpp Complex.cpp Rational.cpp Matrix.cpp
 COMMON = utils.cpp error.cpp
 MAIN = main.cpp
@@ -67,6 +69,7 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 	rm -f ${TEST_NAME}
+	rm -f ${HISTORY_FILE}
 
 re: fclean all
 
