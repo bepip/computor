@@ -109,7 +109,7 @@ expr_ptr Parser::parse_unary() {
 //  factor := NUMBER | IDENT | function_call | '(' expression ')'
 [[nodiscard]] expr_ptr Parser::parse_factor() {
 	if (match(token_type::Number)) {
-		return std::make_unique<NumberExpr>(previous().value);
+		return std::make_unique<NumberExpr>(previous().lexeme);
 	}
 
 	if (match(token_type::Ident)) {

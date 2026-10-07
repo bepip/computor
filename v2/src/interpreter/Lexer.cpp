@@ -23,7 +23,7 @@ Token Lexer::next_token() {
 	skip_white_space();
 
 	if (pos >= src.size())
-		return {token_type::End, "", 0};
+		return {token_type::End, ""};
 	char curr = current_char();
 
 	if (std::isdigit(curr))
@@ -34,31 +34,31 @@ Token Lexer::next_token() {
 	switch (curr) {
 		case '+':
 			advance();
-			return {token_type::Plus, "+", 0};
+			return {token_type::Plus, "+"};
 		case '-':
 			advance();
-			return {token_type::Minus, "-", 0};
+			return {token_type::Minus, "-"};
 		case '*':
 			advance();
-			return {token_type::Mul, "*", 0};
+			return {token_type::Mul, "*"};
 		case '/':
 			advance();
-			return {token_type::Div, "/", 0};
+			return {token_type::Div, "/"};
 		case '^':
 			advance();
-			return {token_type::Power, "^", 0};
+			return {token_type::Power, "^"};
 		case '(':
 			advance();
-			return {token_type::LParen, "(", 0};
+			return {token_type::LParen, "("};
 		case ')':
 			advance();
-			return {token_type::RParen, ")", 0};
+			return {token_type::RParen, ")"};
 		case '=':
 			advance();
-			return {token_type::Assign, "=", 0};
+			return {token_type::Assign, "="};
 		case '?':
 			advance();
-			return {token_type::Query, "?", 0};
+			return {token_type::Query, "?"};
 	}
 	throw InterpreterError("Lexer", "Invalid token: " + std::string(1, curr));
 }
@@ -91,8 +91,7 @@ Token Lexer::number() {
 	}
 	return {
 		token_type::Number,
-		num_str,
-		std::stod(num_str),
+		num_str
 	};
 }
 
@@ -110,8 +109,8 @@ Token Lexer::identifier() {
 	}
 	std::string str = src.substr(start, pos - start);
 	if (str == "i" || str == "I")
-		return {token_type::Imag, str, 0};
-	return {token_type::Ident, str, 0};
+		return {token_type::Imag, str};
+	return {token_type::Ident, str};
 }
 
 void Lexer::skip_white_space() {
@@ -161,7 +160,7 @@ void Token::print() const {
 }
 
 bool Token::operator==(const Token &t) const {
-	return type == t.type && lexeme == t.lexeme && value == t.value;
+	return type == t.type && lexeme == t.lexeme;
 }
 
 bool Token::operator!=(const Token &t) const {

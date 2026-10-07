@@ -23,7 +23,6 @@ enum class token_type {
 struct Token {
 	token_type type;
 	std::string lexeme;
-	double value;
 
 	std::string to_string() const;
 	bool operator==(const Token &t) const;

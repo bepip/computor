@@ -36,37 +36,37 @@ namespace {
 			tests.emplace_back(token_test{std::string(input), et});
 		};
 		add_test_case("5.5+-*/()6", {
-										{token_type::Number, "5.5", 5.5},
-										{token_type::Plus, "+", 0},
-										{token_type::Minus, "-", 0},
-										{token_type::Mul, "*", 0},
-										{token_type::Div, "/", 0},
-										{token_type::LParen, "(", 0},
-										{token_type::RParen, ")", 0},
-										{token_type::Number, "6", 6},
-										{token_type::End, "", 0},
+										{token_type::Number, "5.5"},
+										{token_type::Plus, "+"},
+										{token_type::Minus, "-"},
+										{token_type::Mul, "*"},
+										{token_type::Div, "/"},
+										{token_type::LParen, "("},
+										{token_type::RParen, ")"},
+										{token_type::Number, "6"},
+										{token_type::End, ""},
 									});
 		add_test_case("1 + 1 / 2.0", {
-										 {token_type::Number, "1", 1},
-										 {token_type::Plus, "+", 0},
-										 {token_type::Number, "1", 1},
-										 {token_type::Div, "/", 0},
-										 {token_type::Number, "2.0", 2.0},
-										 {token_type::End, "", 0},
+										 {token_type::Number, "1"},
+										 {token_type::Plus, "+"},
+										 {token_type::Number, "1"},
+										 {token_type::Div, "/"},
+										 {token_type::Number, "2.0"},
+										 {token_type::End, ""},
 									 });
 
 		add_test_case("                   \t", {
-												   {token_type::End, "", 0},
+												   {token_type::End, ""},
 											   });
 
 		add_test_case("A", {
-							   {token_type::Ident, "A", 0},
-							   {token_type::End, "", 0},
+							   {token_type::Ident, "A"},
+							   {token_type::End, ""},
 						   });
 		add_test_case("Aasdasdasd i", {
-										  {token_type::Ident, "Aasdasdasd", 0},
-										  {token_type::Imag, "i", 0},
-										  {token_type::End, "", 0},
+										  {token_type::Ident, "Aasdasdasd"},
+										  {token_type::Imag, "i"},
+										  {token_type::End, ""},
 									  });
 		return tests;
 	}

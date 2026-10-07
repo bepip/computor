@@ -43,9 +43,8 @@ void Repl::run() {
 			continue;
 		}
 		try {
-			// Value result =
-			runtime.execute(line);
-			// result.print();
+			Value result = runtime.execute(line);
+			result.print();
 		} catch (const InterpreterError &e) {
 			std::cout << format_error(e) << "\n";
 		} catch (const std::exception &e) {

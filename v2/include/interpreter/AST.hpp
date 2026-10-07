@@ -25,9 +25,9 @@ using stmt_ptr = std::unique_ptr<Statement>;
 
 class NumberExpr : public Expression {
   public:
-	double value;
+	std::string value;
 
-	NumberExpr(double value) :
+	NumberExpr(const std::string &value) :
 		value(value) {}
 };
 

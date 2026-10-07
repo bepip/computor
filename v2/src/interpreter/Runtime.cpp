@@ -11,13 +11,8 @@ Runtime::Runtime() :
 Value Runtime::execute(std::string_view line) {
 	auto tokens = lexer.tokenize(line);
 
-	// for (const auto &token : tokens) {
-	// 	token.print();
-	// }
-
 	auto ast = parser.parse(tokens);
-	ASTPrinter::print(ast.get());
+	// ASTPrinter::print(ast.get());
 
-	// return evaluator.evaluate(ast.get());
-	return {};
+	return evaluator.evaluate(ast.get());
 }
