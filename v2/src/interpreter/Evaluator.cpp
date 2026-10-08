@@ -41,8 +41,13 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 Value Evaluator::evaluate_expression(const Expression *expr) {
 	if (auto number = dynamic_cast<const NumberExpr *>(expr)) {
 		return Value{Rational(number->value)};
-	}
-	if (auto binary = dynamic_cast<const BinaryExpr *>(expr)) {
+	} else if (auto variable = dynamic_cast<const VariableExpr *>(expr)) {
+		if (auto opt = context.get_var(variable->name)) {
+			return opt.value();
+		}
+		// TODO: create a math error class to print math related errors
+		throw InterpreterError("math todo", "Variable not found");
+	} else if (auto binary = dynamic_cast<const BinaryExpr *>(expr)) {
 		Value left = evaluate_expression(binary->left.get());
 		Value right = evaluate_expression(binary->right.get());
 		return apply_binary(binary->op, left, right);

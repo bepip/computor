@@ -21,7 +21,7 @@ OBJ_DIR = obj/
 
 CLI = Repl.cpp
 INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp ASTPrinter.cpp \
-			  Evaluator.cpp
+			  Evaluator.cpp Context.cpp
 MATHLIB = Value.cpp math_utils.cpp Complex.cpp Rational.cpp Matrix.cpp
 COMMON = utils.cpp error.cpp
 MAIN = main.cpp
