@@ -82,12 +82,29 @@ void Repl::welcome_message() const {
 
 void Repl::vars() const {
 	// TODO: print values nicer
-	for (const auto &it : runtime.get_context().variables) {
+	const auto &context = runtime.get_context();
+	if (context.variables.empty()) {
+		std::cout << "No variables saved.\n";
+		return;
+	}
+	for (const auto &it : context.variables) {
 		std::cout << it.first << " = ";
 		it.second.println();
 	}
-	// printf("Not impemented yet\n");
 }
+
+// void Repl::functions() const {
+// 	// TODO: print values nicer
+// 	const auto &context = runtime.get_context();
+// 	if (context.functions.empty()) {
+// 		std::cout << "No functions saved.\n";
+// 		return;
+// 	}
+// 	for (const auto &it : context.functions) {
+// 		std::cout << it.first << " = ";
+// 		it.second.print();
+// 	}
+// }
 
 void Repl::history() const {
 	size_t count(1);
