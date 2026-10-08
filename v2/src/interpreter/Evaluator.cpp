@@ -45,12 +45,19 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		if (auto opt = context.get_var(variable->name)) {
 			return opt.value();
 		}
-		// TODO: create a math error class to print math related errors
+		// TODO: create a runtime/context error class to print math related errors
 		throw InterpreterError("math todo", "Variable not found");
 	} else if (auto binary = dynamic_cast<const BinaryExpr *>(expr)) {
 		Value left = evaluate_expression(binary->left.get());
 		Value right = evaluate_expression(binary->right.get());
 		return apply_binary(binary->op, left, right);
+	} else if (auto function = dynamic_cast<const FunctionCallExpr *>(expr)) {
+		(void)function;
+		throw InterpreterError("Evaluator", "FunctionCallExpr not implemented yet");
+	} else if (auto unary = dynamic_cast<const UnaryExpr *>(expr)) {
+		char op = unary->op;
+		Value operand = evaluate_expression(unary->operand.get());
+		return apply_unary(op, operand);
 	}
 	throw InterpreterError("Evaluator", "Unsupported expression");
 }
@@ -58,6 +65,17 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 Value Evaluator::apply_binary(char op, Value lhs, Value rhs) {
 	if (lhs.is<Rational>() && rhs.is<Rational>()) {
 		return compute_rational(op, lhs, rhs);
+	}
+	throw InterpreterError("Evaluator", "Can't compute this");
+}
+
+Value Evaluator::apply_unary(char op, Value operand) {
+	if (op == '+') {
+		return operand;
+	}
+	if (operand.is<Rational>()) {
+		const Rational &r = operand.get<Rational>();
+		return Value{-Rational(r)};
 	}
 	throw InterpreterError("Evaluator", "Can't compute this");
 }

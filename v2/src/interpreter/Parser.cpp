@@ -38,7 +38,8 @@
 	return parse_assignment_or_function_definition(std::move(left), std::move(right));
 }
 
-[[nodiscard]] stmt_ptr Parser::parse_assignment_or_function_definition(expr_ptr left, expr_ptr right) {
+[[nodiscard]] stmt_ptr Parser::parse_assignment_or_function_definition(expr_ptr left,
+																	   expr_ptr right) {
 	if (auto var = dynamic_cast<VariableExpr *>(left.get())) {
 		return std::make_unique<AssignmentStmt>(var->name, std::move(right));
 	}
@@ -46,8 +47,7 @@
 	if (auto function = dynamic_cast<FunctionCallExpr *>(left.get())) {
 
 		if (auto parameter = dynamic_cast<VariableExpr *>(function->argument.get())) {
-			return std::make_unique<FunctionDefStmt>(function->name,
-													 parameter->name,
+			return std::make_unique<FunctionDefStmt>(function->name, parameter->name,
 													 std::move(right));
 		}
 		throw InterpreterError("Parser", "Invalid function definition target");
@@ -87,9 +87,10 @@
 	return left;
 }
 
-// unary:= '-' power | power
+// unary:= '+' power |'-' power | power
 expr_ptr Parser::parse_unary() {
-	if (match(token_type::Minus)) {
+	if (match(token_type::Plus)) {
+	} else if (match(token_type::Minus)) {
 		auto operand = parse_power();
 		return std::make_unique<UnaryExpr>('-', std::move(operand));
 	}
@@ -147,7 +148,9 @@ expr_ptr Parser::parse_unary() {
 	return tokens[pos + offset];
 }
 
-[[nodiscard]] const Token &Parser::previous() const { return tokens[pos - 1]; }
+[[nodiscard]] const Token &Parser::previous() const {
+	return tokens[pos - 1];
+}
 
 [[nodiscard]] bool Parser::is_at_end() const {
 	return peek().type == token_type::End;
@@ -181,12 +184,10 @@ bool Parser::is_implicit_multiplication() const {
 		return false;
 
 	token_type prev = previous().type;
-	bool left = prev == token_type::Number ||
-				prev == token_type::Ident ||
+	bool left = prev == token_type::Number || prev == token_type::Ident ||
 				prev == token_type::RParen;
 
-	bool right = current == token_type::Number ||
-				 current == token_type::Ident ||
+	bool right = current == token_type::Number || current == token_type::Ident ||
 				 current == token_type::LParen;
 
 	if (prev == token_type::Ident && current == token_type::LParen) {

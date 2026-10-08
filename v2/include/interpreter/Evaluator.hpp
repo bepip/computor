@@ -15,6 +15,8 @@ class Evaluator {
 
 	[[nodiscard]]
 	Value apply_binary(char op, Value lhs, Value rhs);
+	[[nodiscard]]
+	Value apply_unary(char op, Value operand);
 
 	[[nodiscard]]
 	Value compute_rational(char op, Value lhs, Value rhs);
