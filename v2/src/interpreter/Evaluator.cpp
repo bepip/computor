@@ -1,9 +1,41 @@
 #include "../../include/interpreter/Evaluator.hpp"
 #include "../../include/interpreter/error/InterpreterError.hpp"
+#include <iostream>
 #include <stdexcept>
 
 Value Evaluator::evaluate(const Statement *stmt) {
 	return evaluate_statement(stmt);
+}
+
+Value Evaluator::evaluate_statement(const Statement *stmt) {
+	if (auto assign = dynamic_cast<const AssignmentStmt *>(stmt)) {
+		std::cout << "Evaluator: Assignment: " << assign->name << "\n";
+		auto value = evaluate_expression(assign->value.get());
+		context.variables.insert_or_assign(assign->name, value);
+		// throw std::logic_error("Evaluator: AssigbmentStmt: Not implemented yet");
+		return value;
+	} else if (auto function = dynamic_cast<const FunctionDefStmt *>(stmt)) {
+		std::cout << "Evaluator: FunctionDef('" << function->name << "("
+				  << function->parameter << ")" << "')\n";
+		// TODO: idk how to handle functions yet
+		// NOTE: save function name in context with reduced body etc
+		auto value = evaluate_expression(function->body.get());
+		throw std::logic_error("Evaluator: FunctionDefStmt: Not implemented yet");
+		return value;
+	} else if (auto expr_stmt = dynamic_cast<const ExpressionStmt *>(stmt)) {
+		return evaluate_expression(expr_stmt->expr.get());
+	} else if (auto eval = dynamic_cast<const EvalStmt *>(stmt)) {
+		auto value = evaluate_expression(eval->expr.get());
+		throw std::logic_error("Evaluator: EvalStmt: Not implemented yet");
+		return value;
+	} else if (auto equation = dynamic_cast<const SolveStmt *>(stmt)) {
+		auto lhs = evaluate_expression(equation->left.get());
+		auto rhs = evaluate_expression(equation->right.get());
+
+		throw std::logic_error("Evaluator: SolveStmt: Not implemented yet");
+		return {};
+	}
+	throw InterpreterError("Evaluator", "Unsupported statement");
 }
 
 Value Evaluator::evaluate_expression(const Expression *expr) {
@@ -16,13 +48,6 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		return apply_binary(binary->op, left, right);
 	}
 	throw InterpreterError("Evaluator", "Unsupported expression");
-}
-
-Value Evaluator::evaluate_statement(const Statement *stmt) {
-	if (auto expr_stmt = dynamic_cast<const ExpressionStmt *>(stmt)) {
-		return evaluate_expression(expr_stmt->expr.get());
-	}
-	throw InterpreterError("Evaluator", "Unsupported statement");
 }
 
 Value Evaluator::apply_binary(char op, Value lhs, Value rhs) {

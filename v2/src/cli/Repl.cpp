@@ -44,7 +44,7 @@ void Repl::run() {
 		}
 		try {
 			Value result = runtime.execute(line);
-			result.print();
+			result.println();
 		} catch (const InterpreterError &e) {
 			std::cout << format_error(e) << "\n";
 		} catch (const std::exception &e) {
@@ -81,7 +81,12 @@ void Repl::welcome_message() const {
 }
 
 void Repl::vars() const {
-	printf("Not impemented yet\n");
+	// TODO: print values nicer
+	for (const auto &it : runtime.get_context().variables) {
+		std::cout << it.first << " = ";
+		it.second.println();
+	}
+	// printf("Not impemented yet\n");
 }
 
 void Repl::history() const {

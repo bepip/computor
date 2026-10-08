@@ -2,7 +2,6 @@
 #include <cstddef>
 #include <ostream>
 #include <stdexcept>
-#include <string>
 #include <vector>
 
 Matrix::Matrix(size_t rows, size_t columns) :
@@ -31,6 +30,15 @@ size_t Matrix::rows() const {
 
 size_t Matrix::columns() const {
 	return _columns;
+}
+
+Matrix Matrix::operator-() const {
+	std::vector<Rational> result_data(_data.size());
+
+	for (size_t i(0); i < _data.size(); ++i) {
+		result_data[i] = -_data[i];
+	}
+	return {_rows, _columns, result_data};
 }
 
 Matrix Matrix::operator+(const Matrix &rhs) const {
@@ -71,15 +79,6 @@ Matrix Matrix::operator*(const Matrix &rhs) const {
 	return {_rows, _columns, result_data};
 }
 
-Matrix Matrix::operator*(const Rational &scalar) const {
-	std::vector<Rational> result_data(_data.size());
-
-	for (size_t i(0); i < _data.size(); ++i) {
-		result_data[i] = scalar * _data[i];
-	}
-	return {_rows, _columns, result_data};
-}
-
 Matrix Matrix::matrix_multiplication(const Matrix &rhs) const {
 	if (_columns != rhs.rows()) {
 		throw std::invalid_argument("Matrix: invalid matrices sizes");
@@ -97,6 +96,39 @@ Matrix Matrix::matrix_multiplication(const Matrix &rhs) const {
 		}
 	}
 	return res;
+}
+
+Matrix Matrix::operator*(const Rational &scalar) const {
+	std::vector<Rational> result_data(_data.size());
+
+	for (size_t i(0); i < _data.size(); ++i) {
+		result_data[i] = scalar * _data[i];
+	}
+	return {_rows, _columns, result_data};
+}
+
+bool Matrix::operator==(const Matrix &rhs) {
+	if (_rows != rhs.rows() || _columns != rhs.columns()) {
+		return false;
+	}
+	for (size_t i(0); i < _data.size(); ++i) {
+		if (_data[i] != rhs._data[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Matrix::operator!=(const Matrix &rhs) {
+	if (_rows != rhs.rows() || _columns != rhs.columns()) {
+		return true;
+	}
+	for (size_t i(0); i < _data.size(); ++i) {
+		if (_data[i] == rhs._data[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 std::ostream &operator<<(std::ostream &out, const Matrix &m) {

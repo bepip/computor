@@ -39,6 +39,7 @@ class VariableExpr : public Expression {
 		name(name) {}
 };
 
+// TODO: make op an enum class
 class UnaryExpr : public Expression {
   public:
 	char op;

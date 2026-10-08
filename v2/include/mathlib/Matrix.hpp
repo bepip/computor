@@ -7,8 +7,8 @@
 
 class Matrix {
   private:
-	const size_t _rows;
-	const size_t _columns;
+	size_t _rows;
+	size_t _columns;
 	std::vector<Rational> _data;
 
   public:
@@ -22,11 +22,16 @@ class Matrix {
 	size_t rows() const;
 	size_t columns() const;
 
+	Matrix operator-() const;
+
 	Matrix operator+(const Matrix &rhs) const;
 	Matrix operator-(const Matrix &rhs) const;
 	Matrix operator*(const Matrix &rhs) const;			   // element-wise
 	Matrix matrix_multiplication(const Matrix &rhs) const; // matrix multiplication
 	Matrix operator*(const Rational &scalar) const;
+
+	bool operator==(const Matrix &rhs);
+	bool operator!=(const Matrix &rhs);
 };
 
 std::ostream &operator<<(std::ostream &out, const Matrix &m);
