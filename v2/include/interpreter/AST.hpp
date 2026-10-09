@@ -31,6 +31,8 @@ class NumberExpr : public Expression {
 		value(value) {}
 };
 
+class ImagExpr : public Expression {};
+
 class VariableExpr : public Expression {
   public:
 	std::string name;

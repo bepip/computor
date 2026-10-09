@@ -24,7 +24,10 @@ class Evaluator {
 	Value compute_matrix(char op, Value lhs, Value rhs);
 	[[nodiscard]]
 	Value compute_complex(char op, Value lhs, Value rhs);
-
+	[[nodiscard]]
+	Value compute_rational_complex(char op, Value lhs, Value rhs);
+	[[nodiscard]]
+	Value compute_complex_rational(char op, Value lhs, Value rhs);
 
   public:
 	explicit Evaluator(Context &context) :

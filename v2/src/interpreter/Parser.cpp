@@ -70,12 +70,30 @@
 // term:= unary (('*' | '/' | '%' | implicit_mul) unary)*
 [[nodiscard]] expr_ptr Parser::parse_term() {
 	auto left = parse_unary();
-	while (match(token_type::Mul) || match(token_type::Div) || match(token_type::Mod) ||
-		   is_implicit_multiplication()) {
-		char op = previous().lexeme[0];
-		auto right = parse_unary();
-		left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
+	for (;;) {
+		if (match(token_type::Mul)) {
+			auto right = parse_unary();
+			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
+		} else if (match(token_type::Div)) {
+			auto right = parse_unary();
+			left = std::make_unique<BinaryExpr>(std::move(left), '/', std::move(right));
+		} else if (match(token_type::Mod)) {
+			auto right = parse_unary();
+			left = std::make_unique<BinaryExpr>(std::move(left), '%', std::move(right));
+		} else if (is_implicit_multiplication()) {
+			auto right = parse_unary();
+			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
+		} else {
+			break;
+		}
 	}
+	// while (match(token_type::Mul) || match(token_type::Div) || match(token_type::Mod)
+	// || 	   is_implicit_multiplication()) { 	char op = previous().lexeme[0]; 	if
+	// (is_implicit_multiplication()) { 		op = '*';
+	// 	}
+	// 	auto right = parse_unary();
+	// 	left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
+	// }
 	return left;
 }
 
@@ -99,10 +117,14 @@ expr_ptr Parser::parse_unary() {
 	return left;
 }
 
-//  factor := NUMBER | IDENT | function_call | '(' expression ')'
+//  factor := NUMBER | IDENT | IMAG | function_call | '(' expression ')'
 [[nodiscard]] expr_ptr Parser::parse_factor() {
 	if (match(token_type::Number)) {
 		return std::make_unique<NumberExpr>(previous().lexeme);
+	}
+
+	if (match(token_type::Imag)) {
+		return std::make_unique<ImagExpr>();
 	}
 
 	if (match(token_type::Ident)) {
@@ -174,19 +196,61 @@ bool Parser::is_implicit_multiplication() const {
 	token_type current = peek().type;
 	if (pos == 0)
 		return false;
+	if (current == token_type::End) {
+		return false;
+	}
 
 	token_type prev = previous().type;
 	bool left = prev == token_type::Number || prev == token_type::Ident ||
-				prev == token_type::RParen;
+				prev == token_type::RParen || prev == token_type::Imag;
 
 	bool right = current == token_type::Number || current == token_type::Ident ||
-				 current == token_type::LParen;
+				 current == token_type::LParen || current == token_type::Imag;
 
 	if (prev == token_type::Ident && current == token_type::LParen) {
+		return false;
+	}
+
+	if (prev == token_type::Imag && current == token_type::Imag) {
 		return false;
 	}
 	if (prev == token_type::Number && current == token_type::Number) {
 		return false;
 	}
+
 	return left && right;
 }
+//
+// std::string token_to_string(token_type type) {
+// 	switch (type) {
+// 		case token_type::Ident:
+// 			return "IDENT";
+// 		case token_type::Imag:
+// 			return "IMAG";
+// 		case token_type::Assign:
+// 			return "ASSIGN";
+// 		case token_type::Plus:
+// 			return "PLUS_SIGN";
+// 		case token_type::Minus:
+// 			return "MINUS_SIGN";
+// 		case token_type::Div:
+// 			return "DIV_SIGN";
+// 		case token_type::Mul:
+// 			return "MUL_SIGN";
+// 		case token_type::Power:
+// 			return "POWER";
+// 		case token_type::Mod:
+// 			return "MOD_SIGN";
+// 		case token_type::LParen:
+// 			return "LPAREN";
+// 		case token_type::RParen:
+// 			return "RPAREN";
+// 		case token_type::Number:
+// 			return "NUMBER";
+// 		case token_type::Query:
+// 			return "QUERY";
+// 		case token_type::End:
+// 			return "EOF";
+// 	}
+// 	return "INVALID_TOKEN";
+// }

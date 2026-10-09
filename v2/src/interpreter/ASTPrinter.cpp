@@ -76,6 +76,13 @@ void ASTPrinter::print_expression(const Expression *expr, size_t level) {
 		print_expression(binary->right.get(), level + 1);
 		return;
 	}
+
+	if (dynamic_cast<const ImagExpr *>(expr)) {
+		indent(level);
+		std::cout << "ImagExpr(i)\n";
+		return;
+	}
+
 	if (auto function = dynamic_cast<const FunctionCallExpr *>(expr)) {
 		indent(level);
 		std::cout << "FuncCall(" << function->name << ")\n";

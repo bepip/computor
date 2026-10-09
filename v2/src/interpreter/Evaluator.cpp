@@ -9,7 +9,6 @@ Value Evaluator::evaluate(const Statement *stmt) {
 
 Value Evaluator::evaluate_statement(const Statement *stmt) {
 	if (auto assign = dynamic_cast<const AssignmentStmt *>(stmt)) {
-		std::cout << "Evaluator: Assignment: " << assign->name << "\n";
 		auto value = evaluate_expression(assign->value.get());
 		context.add_var(assign->name, value);
 		// throw std::logic_error("Evaluator: AssigbmentStmt: Not implemented yet");
@@ -41,6 +40,8 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 Value Evaluator::evaluate_expression(const Expression *expr) {
 	if (auto number = dynamic_cast<const NumberExpr *>(expr)) {
 		return Value{Rational(number->value)};
+	} else if (dynamic_cast<const ImagExpr *>(expr)) {
+		return Value{Complex(0, 1)};
 	} else if (auto variable = dynamic_cast<const VariableExpr *>(expr)) {
 		if (auto opt = context.get_var(variable->name)) {
 			return opt.value();
@@ -66,6 +67,18 @@ Value Evaluator::apply_binary(char op, Value lhs, Value rhs) {
 	if (lhs.is<Rational>() && rhs.is<Rational>()) {
 		return compute_rational(op, lhs, rhs);
 	}
+	if (lhs.is<Complex>() && rhs.is<Rational>()) {
+		return compute_complex_rational(op, lhs, rhs);
+	}
+	if (lhs.is<Rational>() && rhs.is<Complex>()) {
+		return compute_rational_complex(op, lhs, rhs);
+	}
+	if (lhs.is<Complex>() && rhs.is<Complex>()) {
+		return compute_complex(op, lhs, rhs);
+	}
+	if (lhs.is<Matrix>() && rhs.is<Matrix>()) {
+		return compute_matrix(op, lhs, rhs);
+	}
 	throw InterpreterError("Evaluator", "Can't compute this");
 }
 
@@ -77,7 +90,11 @@ Value Evaluator::apply_unary(char op, Value operand) {
 		const Rational &r = operand.get<Rational>();
 		return Value{-Rational(r)};
 	}
-	throw InterpreterError("Evaluator", "Can't compute this");
+	if (operand.is<Complex>()) {
+		const Complex &c = operand.get<Rational>();
+		return Value{-Complex(c)};
+	}
+	throw InterpreterError("Evaluator", "Can't apply unary to this expression");
 }
 
 Value Evaluator::compute_rational(char op, Value lhs, Value rhs) {
@@ -127,5 +144,16 @@ Value Evaluator::compute_complex(char op, Value lhs, Value rhs) {
 		case '/':
 			return Value{left / right};
 	}
-	throw std::runtime_error("Complex: Unknown operator");
+	std::string err = "Can't use  '" + std::string(1, op) + "' on complex numbers";
+	throw std::runtime_error(err);
+}
+
+Value Evaluator::compute_rational_complex(char op, Value lhs, Value rhs) {
+	const Value left = Value{Complex(lhs.get<Rational>())};
+	return compute_complex(op, left, rhs);
+}
+
+Value Evaluator::compute_complex_rational(char op, Value lhs, Value rhs) {
+	const Value right = Value{Complex(rhs.get<Rational>())};
+	return compute_complex(op, lhs, right);
 }
