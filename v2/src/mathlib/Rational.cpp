@@ -55,7 +55,6 @@ double Rational::to_double() const {
 	return static_cast<double>(_numerator) / static_cast<double>(_denominator);
 }
 
-// TODO: check for overflows
 Rational Rational::operator+(const Rational &rhs) const {
 	std::int64_t g = std::gcd(_denominator, rhs._denominator);
 	//  num = (_numerator * rhs._denominator + rhs._numerator * _denominator) / g;
@@ -69,10 +68,11 @@ Rational Rational::operator+(const Rational &rhs) const {
 
 Rational Rational::operator-(const Rational &rhs) const {
 	int64_t g = std::gcd(_denominator, rhs._denominator);
-	auto left_multiplier = rhs._denominator / g;
-	auto right_multiplier = _denominator / g;
-	std::int64_t num = _numerator * left_multiplier - rhs._numerator * right_multiplier;
-	std::int64_t deno = _denominator * left_multiplier;
+	auto left_multiplier = checked_div(rhs._denominator, g);
+	auto right_multiplier = checked_div(_denominator, g);
+	std::int64_t num = checked_sub(checked_mul(_numerator, left_multiplier),
+								   checked_mul(rhs._numerator, right_multiplier));
+	std::int64_t deno = checked_mul(_denominator, left_multiplier);
 	return {num, deno};
 }
 
@@ -97,7 +97,6 @@ Rational Rational::operator/(const Rational &rhs) const {
 	return *this * inverse;
 }
 
-// TODO: write function body
 Rational Rational::operator%(const Rational &rhs) const {
 	if (_denominator != 1 || rhs._denominator != 1) {
 		throw std::domain_error("Modulo requires integer operands");
@@ -154,6 +153,8 @@ bool Rational::operator!=(const Rational &rhs) const {
 	return !(*this == rhs);
 }
 
+// NOTE: might be better to find a way to check without multiplying
+// but for now it is enough since this project does not do any comparison
 bool Rational::operator<(const Rational &rhs) const {
 	return checked_mul(_numerator, rhs._denominator) <
 		   checked_mul(rhs._numerator, _denominator);
@@ -203,7 +204,7 @@ std::int64_t checked_add(std::int64_t a, std::int64_t b) {
 		throw std::overflow_error("Rational addition overflow");
 	}
 	return result;
-	// WARNING: if 42 compiler does not have compiler builtins
+	// NOTE: if 42 compiler does not have compiler builtins
 	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
 	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	//
@@ -222,7 +223,7 @@ std::int64_t checked_sub(std::int64_t a, std::int64_t b) {
 		throw std::overflow_error("Rational subtraction overflow");
 	}
 	return result;
-	// WARNING: if 42 compiler does not have compiler builtins
+	// NOTE: if 42 compiler does not have compiler builtins
 	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
 	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	//
@@ -242,7 +243,7 @@ std::int64_t checked_mul(std::int64_t a, std::int64_t b) {
 		throw std::overflow_error("Rational multiplication overflow");
 	}
 	return result;
-	// WARNING: if 42 compiler does not have compiler builtins
+	// NOTE: if 42 compiler does not have compiler builtins
 	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
 	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	// if (a > 0) {
