@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-Rational::Rational(std::intmax_t numerator, std::intmax_t denominator) :
+Rational::Rational(std::int64_t numerator, std::int64_t denominator) :
 	_numerator(numerator),
 	_denominator(denominator) {
 	normalize();
@@ -21,7 +21,7 @@ Rational::Rational(std::string decimal) {
 		decimals_len = decimal.size() - dot_pos - 1;
 		decimal.erase(dot_pos, 1);
 	}
-	std::intmax_t value;
+	std::int64_t value;
 	auto [ptr, ec] =
 		std::from_chars(decimal.data(), decimal.data() + decimal.size(), value);
 	if (ec == std::errc::invalid_argument || ptr != decimal.data() + decimal.size()) {
@@ -35,7 +35,7 @@ Rational::Rational(std::string decimal) {
 	_numerator = value;
 	_denominator = 1;
 	for (std::size_t i = 0; i < decimals_len; ++i) {
-		if (_denominator > std::numeric_limits<std::intmax_t>::max() / 10) {
+		if (_denominator > std::numeric_limits<std::int64_t>::max() / 10) {
 			throw std::overflow_error("Rational denominator is too large");
 		}
 		_denominator *= 10;
@@ -43,11 +43,11 @@ Rational::Rational(std::string decimal) {
 	normalize();
 }
 
-std::intmax_t Rational::numerator() const {
+std::int64_t Rational::numerator() const {
 	return _numerator;
 }
 
-std::intmax_t Rational::denominator() const {
+std::int64_t Rational::denominator() const {
 	return _denominator;
 }
 
@@ -57,24 +57,22 @@ double Rational::to_double() const {
 
 // TODO: check for overflows
 Rational Rational::operator+(const Rational &rhs) const {
-	std::cout << sizeof(std::intmax_t)<< std::endl;
-	unsigned long g = std::gcd(_denominator, rhs._denominator);
+	std::int64_t g = std::gcd(_denominator, rhs._denominator);
 	//  num = (_numerator * rhs._denominator + rhs._numerator * _denominator) / g;
-	std::intmax_t num =
-		checked_div(checked_add(checked_mul(_numerator, rhs._denominator),
-								checked_mul(rhs._numerator, _denominator)),
-					g);
-	// std::intmax_t deno = (_denominator * rhs._denominator) / g;
-	std::intmax_t deno = checked_div(checked_mul(_denominator, rhs._denominator), g);
+	std::int64_t num = checked_div(checked_add(checked_mul(_numerator, rhs._denominator),
+											   checked_mul(rhs._numerator, _denominator)),
+								   g);
+	// std::int64_t deno = (_denominator * rhs._denominator) / g;
+	std::int64_t deno = checked_div(checked_mul(_denominator, rhs._denominator), g);
 	return {num, deno};
 }
 
 Rational Rational::operator-(const Rational &rhs) const {
-	unsigned long g = std::gcd(_denominator, rhs._denominator);
+	int64_t g = std::gcd(_denominator, rhs._denominator);
 	auto left_multiplier = rhs._denominator / g;
 	auto right_multiplier = _denominator / g;
-	std::intmax_t num = _numerator * left_multiplier - rhs._numerator * right_multiplier;
-	std::intmax_t deno = _denominator * left_multiplier;
+	std::int64_t num = _numerator * left_multiplier - rhs._numerator * right_multiplier;
+	std::int64_t deno = _denominator * left_multiplier;
 	return {num, deno};
 }
 
@@ -115,9 +113,9 @@ Rational Rational::operator^(const Rational &rhs) const {
 	if (rhs._denominator != 1 || rhs._numerator < 0) {
 		throw std::domain_error("Power requires a positive integer");
 	}
-	std::intmax_t num = 1;
-	std::intmax_t den = 1;
-	for (unsigned int i = 0; i < rhs._numerator; ++i) {
+	std::int64_t num = 1;
+	std::int64_t den = 1;
+	for (std::int64_t i = 0; i < rhs._numerator; ++i) {
 		num = checked_mul(num, _numerator);
 		den = checked_mul(den, _denominator);
 	}
@@ -193,21 +191,21 @@ void Rational::normalize() {
 		_denominator = checked_mul(_denominator, -1);
 	}
 
-	auto divisor = std::gcd(_numerator, _denominator);
+	const auto divisor = std::gcd(_numerator, _denominator);
 
 	_numerator = checked_div(_numerator, divisor);
 	_denominator = checked_div(_denominator, divisor);
 }
 
-std::intmax_t checked_add(std::intmax_t a, std::intmax_t b) {
-	std::intmax_t result;
+std::int64_t checked_add(std::int64_t a, std::int64_t b) {
+	std::int64_t result;
 	if (__builtin_add_overflow(a, b, &result)) {
 		throw std::overflow_error("Rational addition overflow");
 	}
 	return result;
 	// WARNING: if 42 compiler does not have compiler builtins
-	// constexpr auto MIN = std::numeric_limits<std::intmax_t>::min();
-	// constexpr auto MAX = std::numeric_limits<std::intmax_t>::max();
+	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
+	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	//
 	// if (a > 0 && b > 0 && a > MAX - b) {
 	// 	throw std::overflow_error("Rational addition overflow");
@@ -218,15 +216,15 @@ std::intmax_t checked_add(std::intmax_t a, std::intmax_t b) {
 	// return a + b;
 }
 
-std::intmax_t checked_sub(std::intmax_t a, std::intmax_t b) {
-	std::intmax_t result;
+std::int64_t checked_sub(std::int64_t a, std::int64_t b) {
+	std::int64_t result;
 	if (__builtin_sub_overflow(a, b, &result)) {
 		throw std::overflow_error("Rational subtraction overflow");
 	}
 	return result;
 	// WARNING: if 42 compiler does not have compiler builtins
-	// constexpr auto MIN = std::numeric_limits<std::intmax_t>::min();
-	// constexpr auto MAX = std::numeric_limits<std::intmax_t>::max();
+	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
+	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	//
 	// if (b < 0 && a > MAX + b) {
 	// 	throw std::overflow_error("Integer subtraction overflow");
@@ -238,15 +236,15 @@ std::intmax_t checked_sub(std::intmax_t a, std::intmax_t b) {
 	// return a - b;
 }
 
-std::intmax_t checked_mul(std::intmax_t a, std::intmax_t b) {
-	std::intmax_t result;
+std::int64_t checked_mul(std::int64_t a, std::int64_t b) {
+	std::int64_t result;
 	if (__builtin_mul_overflow(a, b, &result)) {
 		throw std::overflow_error("Rational multiplication overflow");
 	}
 	return result;
 	// WARNING: if 42 compiler does not have compiler builtins
-	// constexpr auto MIN = std::numeric_limits<std::intmax_t>::min();
-	// constexpr auto MAX = std::numeric_limits<std::intmax_t>::max();
+	// constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
+	// constexpr auto MAX = std::numeric_limits<std::int64_t>::max();
 	// if (a > 0) {
 	// 	if ((b > 0 && a > MAX / b) || (b < 0 && a < MIN / b)) {
 	// 		throw std::overflow_error("Integer multiplication overflow");
@@ -259,8 +257,8 @@ std::intmax_t checked_mul(std::intmax_t a, std::intmax_t b) {
 	// return a * b;
 }
 
-std::intmax_t checked_div(std::intmax_t a, std::intmax_t b) {
-	constexpr auto MIN = std::numeric_limits<std::intmax_t>::min();
+std::int64_t checked_div(std::int64_t a, std::int64_t b) {
+	constexpr auto MIN = std::numeric_limits<std::int64_t>::min();
 
 	if (b == 0) {
 		throw std::domain_error("Rational division by zero");

@@ -5,15 +5,15 @@
 
 class Rational {
   private:
-	std::intmax_t _numerator;
-	std::intmax_t _denominator;
+	std::int64_t _numerator;
+	std::int64_t _denominator;
 
   public:
-	Rational(std::intmax_t numerator = 0, std::intmax_t denominator = 1);
+	Rational(std::int64_t numerator = 0, std::int64_t denominator = 1);
 	Rational(std::string decimal);
 
-	std::intmax_t numerator() const;
-	std::intmax_t denominator() const;
+	std::int64_t numerator() const;
+	std::int64_t denominator() const;
 	double to_double() const;
 
 	Rational operator+(const Rational &rhs) const;
@@ -41,9 +41,9 @@ class Rational {
 	void normalize();
 };
 
-std::intmax_t checked_add(std::intmax_t a, std::intmax_t b);
-std::intmax_t checked_sub(std::intmax_t a, std::intmax_t b);
-std::intmax_t checked_mul(std::intmax_t a, std::intmax_t b);
-std::intmax_t checked_div(std::intmax_t a, std::intmax_t b);
+std::int64_t checked_add(std::int64_t a, std::int64_t b);
+std::int64_t checked_sub(std::int64_t a, std::int64_t b);
+std::int64_t checked_mul(std::int64_t a, std::int64_t b);
+std::int64_t checked_div(std::int64_t a, std::int64_t b);
 
 std::ostream &operator<<(std::ostream &out, const Rational &r);
