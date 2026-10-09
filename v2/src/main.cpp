@@ -4,18 +4,13 @@
 #include <vector>
 
 int main(int ac, char *av[]) {
-	Rational r;
-	Matrix m(2,2);
-	Complex c(2,-2);
-	
-	if (ac == 1) {
-		Repl repl;
-		repl.run();
-	} else {
+	if (ac != 1) {
 		std::vector<std::string> v(av, av + ac);
 		printf("Too many arguments %lu\n", v.size());
 		return 1;
 	}
+	Repl repl;
+	repl.run();
 
 	return 0;
 }

@@ -11,7 +11,7 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 	if (auto assign = dynamic_cast<const AssignmentStmt *>(stmt)) {
 		std::cout << "Evaluator: Assignment: " << assign->name << "\n";
 		auto value = evaluate_expression(assign->value.get());
-		context.variables.insert_or_assign(assign->name, value);
+		context.add_var(assign->name, value);
 		// throw std::logic_error("Evaluator: AssigbmentStmt: Not implemented yet");
 		return value;
 	} else if (auto function = dynamic_cast<const FunctionDefStmt *>(stmt)) {
@@ -94,6 +94,8 @@ Value Evaluator::compute_rational(char op, Value lhs, Value rhs) {
 			return Value{left / right};
 		case '%':
 			return Value{left % right};
+		case '^':
+			return Value{left ^ right};
 	}
 	throw std::runtime_error("Rational: Unknown operator");
 }

@@ -17,6 +17,6 @@ Value Runtime::execute(std::string_view line) {
 	return evaluator.evaluate(ast.get());
 }
 
-Context Runtime::get_context() const {
+const Context &Runtime::get_context() const {
 	return context;
 }

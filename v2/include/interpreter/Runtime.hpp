@@ -13,7 +13,7 @@ class Runtime {
 	Runtime();
 	Value execute(std::string_view line);
 
-	Context get_context() const;
+	const Context &get_context() const;
 
   private:
 	Context context;
