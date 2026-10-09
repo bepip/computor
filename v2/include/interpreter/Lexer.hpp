@@ -14,6 +14,7 @@ enum class token_type {
 	Mul,
 	Div,
 	Power,
+	Mod,
 	LParen,
 	RParen,
 	Query,

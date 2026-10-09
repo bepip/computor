@@ -47,6 +47,9 @@ Token Lexer::next_token() {
 		case '^':
 			advance();
 			return {token_type::Power, "^"};
+		case '%':
+			advance();
+			return {token_type::Mod, "%"};
 		case '(':
 			advance();
 			return {token_type::LParen, "("};
@@ -141,6 +144,8 @@ std::string Token::to_string() const {
 			return "MUL_SIGN('" + lexeme + "')";
 		case token_type::Power:
 			return "POWER('" + lexeme + "')";
+		case token_type::Mod:
+			return "MOD_SIGN('" + lexeme + "')";
 		case token_type::LParen:
 			return "LPAREN('" + lexeme + "')";
 		case token_type::RParen:

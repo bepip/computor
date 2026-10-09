@@ -67,22 +67,14 @@
 	return left;
 }
 
-// term:= unary (('*' | '/' | implicit_mul) unary)*
+// term:= unary (('*' | '/' | '%' | implicit_mul) unary)*
 [[nodiscard]] expr_ptr Parser::parse_term() {
 	auto left = parse_unary();
-	for (;;) {
-		if (match(token_type::Mul)) {
-			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
-		} else if (match(token_type::Div)) {
-			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '/', std::move(right));
-		} else if (is_implicit_multiplication()) {
-			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
-		} else {
-			break;
-		}
+	while (match(token_type::Mul) || match(token_type::Div) || match(token_type::Mod) ||
+		   is_implicit_multiplication()) {
+		char op = previous().lexeme[0];
+		auto right = parse_unary();
+		left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
 	}
 	return left;
 }
