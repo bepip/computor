@@ -21,6 +21,7 @@ class Rational {
 	Rational operator*(const Rational &rhs) const;
 	Rational operator/(const Rational &rhs) const;
 	Rational operator%(const Rational &rhs) const;
+	Rational operator^(const Rational &rhs) const;
 
 	Rational &operator+=(const Rational &rhs);
 	Rational &operator-=(const Rational &rhs);
@@ -38,10 +39,11 @@ class Rational {
 
   private:
 	void normalize();
-	bool add_overflow() const;
-	bool sub_overflow() const;
-	bool mul_overflow() const;
-	bool div_overflow() const;
 };
+
+std::intmax_t checked_add(std::intmax_t a, std::intmax_t b);
+std::intmax_t checked_sub(std::intmax_t a, std::intmax_t b);
+std::intmax_t checked_mul(std::intmax_t a, std::intmax_t b);
+std::intmax_t checked_div(std::intmax_t a, std::intmax_t b);
 
 std::ostream &operator<<(std::ostream &out, const Rational &r);
