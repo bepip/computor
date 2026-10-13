@@ -56,6 +56,18 @@ Token Lexer::next_token() {
 		case ')':
 			advance();
 			return {token_type::RParen, ")"};
+		case '[':
+			advance();
+			return {token_type::LSquareBracket, "["};
+		case ']':
+			advance();
+			return {token_type::RSquareBracket, "]"};
+		case ';':
+			advance();
+			return {token_type::Semicolon, ";"};
+		case ',':
+			advance();
+			return {token_type::Comma, ","};
 		case '=':
 			advance();
 			return {token_type::Assign, "="};
@@ -92,10 +104,7 @@ Token Lexer::number() {
 	if (num_str == "." || num_str.back() == '.') {
 		throw InterpreterError("Lexer", "Invalid token: " + num_str);
 	}
-	return {
-		token_type::Number,
-		num_str
-	};
+	return {token_type::Number, num_str};
 }
 
 Token Lexer::identifier() {
@@ -150,6 +159,14 @@ std::string Token::to_string() const {
 			return "LPAREN('" + lexeme + "')";
 		case token_type::RParen:
 			return "RPAREN('" + lexeme + "')";
+		case token_type::LSquareBracket:
+			return "LSQUAREBRACKET('" + lexeme + "')";
+		case token_type::RSquareBracket:
+			return "LSQUAREBRACKET('" + lexeme + "')";
+		case token_type::Semicolon:
+			return "SEMICOLON('" + lexeme + "')";
+		case token_type::Comma:
+			return "COMMA('" + lexeme + "')";
 		case token_type::Number:
 			return "NUMBER('" + lexeme + "')";
 		case token_type::Query:

@@ -17,6 +17,10 @@ enum class token_type {
 	Mod,
 	LParen,
 	RParen,
+	LSquareBracket,
+	RSquareBracket,
+	Semicolon,
+	Comma,
 	Query,
 	End,
 };
