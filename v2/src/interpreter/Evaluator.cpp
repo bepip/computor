@@ -94,7 +94,7 @@ Value Evaluator::apply_unary(char op, Value operand) {
 		return Value{-Rational(r)};
 	}
 	if (operand.is<Complex>()) {
-		const Complex &c = operand.get<Rational>();
+		const Complex &c = operand.get<Complex>();
 		return Value{-Complex(c)};
 	}
 	throw InterpreterError("Evaluator", "Can't apply unary to this expression");

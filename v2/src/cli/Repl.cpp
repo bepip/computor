@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 
@@ -47,6 +48,8 @@ void Repl::run() {
 			result.println();
 		} catch (const InterpreterError &e) {
 			std::cout << format_error(e) << "\n";
+		} catch (const std::logic_error &e) {
+			std::cerr << "Logic error: " << e.what() << "\n";
 		} catch (const std::exception &e) {
 			std::cerr << "Unexpected error: " << e.what() << "\n";
 		}
