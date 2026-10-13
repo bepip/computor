@@ -15,13 +15,15 @@ class Parser {
 
   private:
 	[[nodiscard]] stmt_ptr parse_statement();
-	[[nodiscard]] stmt_ptr parse_assignment_or_function_definition(expr_ptr left, expr_ptr right);
+	[[nodiscard]] stmt_ptr parse_assignment_or_function_definition(expr_ptr lhs,
+																   expr_ptr rhs);
 
 	[[nodiscard]] expr_ptr parse_expression();
 	[[nodiscard]] expr_ptr parse_term();
 	[[nodiscard]] expr_ptr parse_unary();
 	[[nodiscard]] expr_ptr parse_power();
 	[[nodiscard]] expr_ptr parse_factor();
+	[[nodiscard]] expr_ptr parse_matrix();
 	[[nodiscard]] expr_ptr parse_function_call(std::string_view name);
 
 	[[nodiscard]] const Token &peek(size_t offset = 0) const;

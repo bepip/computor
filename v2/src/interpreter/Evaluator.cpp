@@ -2,6 +2,7 @@
 #include "../../include/interpreter/error/InterpreterError.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 Value Evaluator::evaluate(const Statement *stmt) {
 	return evaluate_statement(stmt);
@@ -59,6 +60,8 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		char op = unary->op;
 		Value operand = evaluate_expression(unary->operand.get());
 		return apply_unary(op, operand);
+	} else if (auto matrix = dynamic_cast<const MatrixExpr *>(expr)) {
+		return evaluate_matrix(matrix);
 	}
 	throw InterpreterError("Evaluator", "Unsupported expression");
 }
@@ -95,6 +98,26 @@ Value Evaluator::apply_unary(char op, Value operand) {
 		return Value{-Complex(c)};
 	}
 	throw InterpreterError("Evaluator", "Can't apply unary to this expression");
+}
+
+Value Evaluator::evaluate_matrix(const MatrixExpr *expr) {
+	const std::vector<std::vector<expr_ptr>> &rows = expr->rows;
+
+	std::vector<Rational> matrix;
+	const size_t size_row = rows.size();
+	const size_t size_col = rows[0].size();
+	matrix.reserve(size_col * size_row);
+
+	for (const auto &row : rows) {
+		for (const auto &val : row) {
+			const auto value = evaluate_expression(val.get());
+			if (!value.is<Rational>()) {
+				throw std::invalid_argument("Element of matrix is not a Rational");
+			}
+			matrix.push_back(value.get<Rational>());
+		}
+	}
+	return Value{Matrix(size_row, size_col, matrix)};
 }
 
 Value Evaluator::compute_rational(char op, Value lhs, Value rhs) {

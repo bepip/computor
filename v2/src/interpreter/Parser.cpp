@@ -1,6 +1,8 @@
 #include "../../include/interpreter/Parser.hpp"
 #include "../../include/interpreter/error/InterpreterError.hpp"
+#include <cstddef>
 #include <memory>
+#include <stdexcept>
 #include <string_view>
 #include <vector>
 
@@ -117,7 +119,7 @@ expr_ptr Parser::parse_unary() {
 	return left;
 }
 
-//  factor := NUMBER | IDENT | IMAG | function_call | '(' expression ')'
+//  factor := NUMBER | IDENT | IMAG | function_call | MATRIX | '(' expression ')'
 [[nodiscard]] expr_ptr Parser::parse_factor() {
 	if (match(token_type::Number)) {
 		return std::make_unique<NumberExpr>(previous().lexeme);
@@ -140,7 +142,32 @@ expr_ptr Parser::parse_unary() {
 		consume(token_type::RParen, "Expected ')'");
 		return expr;
 	}
+
+	if (match(token_type::LSquareBracket)) {
+		return parse_matrix();
+	}
 	throw InterpreterError("Parser", "Expected expression");
+}
+
+[[nodiscard]] expr_ptr Parser::parse_matrix() {
+	std::vector<std::vector<expr_ptr>> rows;
+	do {
+		consume(token_type::LSquareBracket, "Expected '['");
+		std::vector<expr_ptr> row;
+		do {
+			row.push_back(parse_expression());
+		} while (match(token_type::Comma));
+		consume(token_type::RSquareBracket, "Expected ']'");
+		rows.push_back(std::move(row));
+	} while (match(token_type::Semicolon));
+	consume(token_type::RSquareBracket, "Expected ']'");
+	const size_t size = rows[0].size();
+	for (const auto &row : rows) {
+		if (row.size() != size) {
+			throw std::domain_error("Dimension of matrix row do not match");
+		}
+	}
+	return std::make_unique<MatrixExpr>(std::move(rows));
 }
 
 // function_call := IDENT '(' expression ')'
@@ -220,6 +247,7 @@ bool Parser::is_implicit_multiplication() const {
 
 	return left && right;
 }
+
 //
 // std::string token_to_string(token_type type) {
 // 	switch (type) {

@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
 class ASTNode {
   public:
@@ -32,6 +33,14 @@ class NumberExpr : public Expression {
 };
 
 class ImagExpr : public Expression {};
+
+class MatrixExpr : public Expression {
+  public:
+	std::vector<std::vector<expr_ptr>> rows;
+
+	MatrixExpr(std::vector<std::vector<expr_ptr>> rows) :
+		rows(std::move(rows)) {}
+};
 
 class VariableExpr : public Expression {
   public:
