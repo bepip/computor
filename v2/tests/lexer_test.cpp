@@ -16,7 +16,8 @@ namespace {
 		Lexer lexer;
 		bool passed = true;
 		auto tokens = lexer.tokenize(input);
-
+		if (tokens.size() != expected_tokens.size())
+			return {false, 0};
 		for (size_t i = 0; i < tokens.size() && i < expected_tokens.size(); ++i) {
 			const auto &token = tokens[i];
 			const auto &expected_t = expected_tokens[i];

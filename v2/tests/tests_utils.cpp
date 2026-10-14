@@ -3,7 +3,8 @@
 #include <string_view>
 
 void print_test(size_t count, std::string_view msg, const case_result &cr) {
-	std::cout << "[" << count << "]" << (cr.passed ? "✅" : "❌") << ": '" << msg << "'";
+	std::cout << "[" << count << "]" << (cr.passed ? "✅" : REDCROSS) << ": '" << msg
+			  << "'";
 	if (!cr.passed) {
 		std::cout << " -> Error at index " << cr.fail_index;
 	}
@@ -11,7 +12,7 @@ void print_test(size_t count, std::string_view msg, const case_result &cr) {
 }
 
 void print_test(size_t count, std::string_view msg, bool passed) {
-	std::cout << "[" << count << "]" << (passed ? "✅" : "❌") << ": '" << msg << "'";
+	std::cout << "[" << count << "]" << (passed ? "✅" : REDCROSS) << ": '" << msg << "'";
 	std::cout << std::endl;
 }
 
@@ -26,20 +27,37 @@ void print_result(test_result result) {
 
 	std::cout << "-------------------------------------------" << std::endl;
 	std::cout << "[" << passed << "/" << total << "] "
-			  << (failed == 0 ? "Passed ✅" : "Failed ❌") << std::endl;
+			  << (failed == 0 ? "Passed ✅" : "Failed " REDCROSS) << std::endl;
 }
 
 int print_final_result(test_result result) {
 	const size_t total = result.total;
 	const size_t failed = result.failed;
 	const size_t passed = total - failed;
-	std::cout << "===========================================" << std::endl;
+	std::cout << "-------------------------------------------" << std::endl;
 	std::cout << "Total:\n";
 	std::cout << "[" << passed << "/" << total << "] "
-			  << (failed == 0 ? "Passed ✅" : "Failed ❌") << std::endl;
+			  << (failed == 0 ? "Passed ✅" : "Failed " REDCROSS) << std::endl;
 	return failed > 0 ? 1 : 0;
 }
 
 void clear_screen() {
 	std::cout << "\x1b[H\x1b[2J" << std::flush;
+}
+
+int check_expression_throws(Runtime &runtime, std::string_view input, size_t count,
+							std::string_view name) {
+	try {
+		const Value result = runtime.execute(input);
+		print_test(count, name, false);
+		std::cout << "input: " << input << "\n";
+		std::cout << "output: ";
+		result.println();
+		return 1;
+	} catch (const std::exception &e) {
+		print_test(count, name, true);
+		std::cout << "input: " << input << "\n";
+		std::cout << "output: " << e.what() << std::endl;
+		return 0;
+	}
 }

@@ -1,6 +1,6 @@
-
 #pragma once
 
+#include "../include/interpreter/Runtime.hpp"
 #include <exception>
 #include <iostream>
 #include <string_view>
@@ -14,6 +14,7 @@
 #define CYAN "\033[36m"
 #define WHITE "\033[37m"
 #define NC "\033[0m"
+#define REDCROSS RED "❌\033[0m"
 
 struct test_result {
 	size_t failed;
@@ -36,6 +37,7 @@ test_result test_lexer();
 test_result test_rational();
 test_result test_complex();
 test_result test_matrix();
+test_result test_runtime();
 
 void clear_screen();
 void print_title(std::string_view title);
@@ -64,3 +66,32 @@ int check(std::string_view name, const T &actual, const T &expected, size_t coun
 	return !res;
 }
 
+template <typename T>
+int check_expression(Runtime &runtime, std::string_view input, const T &expected,
+					 size_t count, std::string_view name = "") {
+	try {
+		const Value result = runtime.execute(input);
+		if (result.is<T>() && result.get<T>() == expected) {
+			print_test(count, name, true);
+			std::cout << "input: " << input << "\noutput:\n";
+			result.println();
+			return 0;
+		} else {
+			print_test(count, name, false);
+			std::cout << "input: " << input << "\n";
+			std::cout << "expected " << expected << " got ";
+			result.println();
+
+			return 1;
+		}
+
+	} catch (const std::exception &e) {
+		print_test(count, name, false);
+		std::cout << "input: " << input << "\n";
+		std::cout << "output: " << e.what() << std::endl;
+		return 1;
+	}
+}
+
+int check_expression_throws(Runtime &runtime, std::string_view input, size_t count,
+							std::string_view name = "");

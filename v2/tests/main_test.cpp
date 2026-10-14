@@ -10,6 +10,7 @@
 namespace {
 
 	static const std::unordered_map<std::string, std::function<test_result()>> tests{
+		{"runtime", test_runtime},
 		{"matrix", test_matrix},
 		{"complex", test_complex},
 		{"rational", test_rational},
@@ -44,9 +45,9 @@ namespace {
 			run_test(results, test_complex);
 			run_test(results, test_matrix);
 		}
-		// if (contains(args, "-r")) {
-		// 	run_test(results, test_runtime);
-		// }
+		if (contains(args, "-r")) {
+			run_test(results, test_runtime);
+		}
 	}
 
 	std::optional<test_result> test_handler(int ac, char *av[]) {

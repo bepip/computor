@@ -121,14 +121,14 @@ bool Matrix::operator==(const Matrix &rhs) const {
 
 bool Matrix::operator!=(const Matrix &rhs) const{
 	if (_rows != rhs.rows() || _columns != rhs.columns()) {
-		return false;
+		return true;
 	}
 	for (size_t i(0); i < _data.size(); ++i) {
-		if (_data[i] == rhs._data[i]) {
-			return false;
+		if (_data[i] != rhs._data[i]) {
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 std::ostream &operator<<(std::ostream &out, const Matrix &m) {

@@ -169,20 +169,29 @@ Value Evaluator::compute_matrix(operation op, Value lhs, Value rhs) {
 Value Evaluator::compute_complex(operation op, Value lhs, Value rhs) {
 	const Complex &left = lhs.get<Complex>();
 	const Complex &right = rhs.get<Complex>();
+	Complex res;
 	switch (op) {
 		case operation::Add:
-			return Value{left + right};
+			res = left + right;
+			break;
 		case operation::Sub:
-			return Value{left - right};
+			res = left - right;
+			break;
 		case operation::Mul:
-			return Value{left * right};
+			res = left * right;
+			break;
 		case operation::Div:
-			return Value{left / right};
+			res = left / right;
+			break;
 		default:
 			std::string err =
 				"Can't use '" + operation_to_string(op) + "' on complex numbers";
 			throw std::runtime_error(err);
 	}
+	if (res.imag() == 0) {
+		return Value{Rational(res.real())};
+	}
+	return Value{res};
 }
 
 Value Evaluator::compute_rational_complex(operation op, Value lhs, Value rhs) {

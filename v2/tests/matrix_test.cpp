@@ -1,11 +1,10 @@
 #include "../include/mathlib/Matrix.hpp"
 #include "tests.hpp"
 #include <cstddef>
-#include <iostream>
 
 namespace {
 
-	test_result complex_tester() {
+	test_result matrix_tester() {
 		size_t i = 0;
 		size_t failed = 0;
 		{
@@ -45,6 +44,26 @@ namespace {
 			failed += check("scalar multiplication", B * A, C, ++i);
 		}
 		{
+			Matrix B(2, 2, {1, 2, 3, 4});
+			Matrix C(2, 2, {1, 4, 3, 4});
+			failed += check("M1 != M2 => true", B != C, true, ++i);
+		}
+		{
+			Matrix B(2, 2, {1, 2, 3, 4});
+			Matrix C(2, 2, {1, 2, 3, 4});
+			failed += check("M1 != M2 => false", B != C, false, ++i);
+		}
+		{
+			Matrix B(2, 2, {1, 2, 3, 4});
+			Matrix C(2, 2, {1, 2, 3, 4});
+			failed += check("M1 == M2 => true", B == C, true, ++i);
+		}
+		{
+			Matrix B(2, 2, {1, 2, 3, 4});
+			Matrix C(2, 2, {1, 2, 3, 1});
+			failed += check("M1 == M2 => false", B == C, false, ++i);
+		}
+		{
 			Matrix A(2, 2, {1, 2, 3, 4});
 			Matrix B(3, 2, {1, 2, 3, 4, 5, 6});
 			failed += check_throws("Wrong dimension addition", [&]() { A + B; }, ++i);
@@ -73,7 +92,7 @@ namespace {
 
 test_result test_matrix() {
 	print_title("Matrix");
-	const auto &result = complex_tester();
+	const auto &result = matrix_tester();
 	print_result(result);
 	return result;
 }
