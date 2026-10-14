@@ -1,5 +1,4 @@
 #include "../../include/interpreter/Lexer.hpp"
-#include "../../include/common/utils.hpp"
 #include "../../include/interpreter/error/InterpreterError.hpp"
 #include <cctype>
 #include <iostream>
@@ -124,7 +123,7 @@ Token Lexer::identifier() {
 			break;
 		}
 	}
-	std::string str = str::to_lower(src.substr(start, pos - start));
+	std::string str = src.substr(start, pos - start);
 	if (str == "i" || str == "I")
 		return {token_type::Imag, "i"};
 	return {token_type::Ident, str};
