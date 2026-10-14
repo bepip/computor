@@ -60,8 +60,13 @@
 // expression:= term (('+' | '-') term)*
 [[nodiscard]] expr_ptr Parser::parse_expression() {
 	auto left = parse_term();
+
 	while (match(token_type::Plus) || match(token_type::Minus)) {
-		char op = previous().lexeme[0];
+		auto opt = operation_from_char(previous().lexeme[0]);
+		if (!opt.has_value()) {
+			throw InterpreterError("Lexer", "Invalid operation");
+		}
+		operation op = opt.value();
 		auto right = parse_term();
 
 		left = std::make_unique<BinaryExpr>(std::move(left), op, std::move(right));
@@ -69,22 +74,30 @@
 	return left;
 }
 
-// term:= unary (('*' | '/' | '%' | implicit_mul) unary)*
+// term:= unary (('*' | '/' | '%' | matrix mul | implicit_mul) unary)*
 [[nodiscard]] expr_ptr Parser::parse_term() {
 	auto left = parse_unary();
 	for (;;) {
 		if (match(token_type::Mul)) {
 			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
+			left = std::make_unique<BinaryExpr>(std::move(left), operation::Mul,
+												std::move(right));
 		} else if (match(token_type::Div)) {
 			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '/', std::move(right));
+			left = std::make_unique<BinaryExpr>(std::move(left), operation::Div,
+												std::move(right));
 		} else if (match(token_type::Mod)) {
 			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '%', std::move(right));
+			left = std::make_unique<BinaryExpr>(std::move(left), operation::Mod,
+												std::move(right));
+		} else if (match(token_type::MatrixMul)) {
+			auto right = parse_unary();
+			left = std::make_unique<BinaryExpr>(std::move(left), operation::MatrixMul,
+												std::move(right));
 		} else if (is_implicit_multiplication()) {
 			auto right = parse_unary();
-			left = std::make_unique<BinaryExpr>(std::move(left), '*', std::move(right));
+			left = std::make_unique<BinaryExpr>(std::move(left), operation::Mul,
+												std::move(right));
 		} else {
 			break;
 		}
@@ -104,7 +117,7 @@ expr_ptr Parser::parse_unary() {
 	if (match(token_type::Plus)) {
 	} else if (match(token_type::Minus)) {
 		auto operand = parse_power();
-		return std::make_unique<UnaryExpr>('-', std::move(operand));
+		return std::make_unique<UnaryExpr>(operation::Sub, std::move(operand));
 	}
 	return parse_power();
 }
@@ -114,7 +127,8 @@ expr_ptr Parser::parse_unary() {
 	auto left = parse_factor();
 	if (match(token_type::Power)) {
 		auto right = parse_power();
-		left = std::make_unique<BinaryExpr>(std::move(left), '^', std::move(right));
+		left = std::make_unique<BinaryExpr>(std::move(left), operation::Pow,
+											std::move(right));
 	}
 	return left;
 }

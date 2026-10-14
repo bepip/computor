@@ -1,7 +1,9 @@
 #include "../../include/interpreter/ASTPrinter.hpp"
 #include <iostream>
 
-void ASTPrinter::print(const Statement *stmt) { print_statement(stmt, 0); }
+void ASTPrinter::print(const Statement *stmt) {
+	print_statement(stmt, 0);
+}
 
 void ASTPrinter::print_statement(const Statement *stmt, size_t level) {
 	if (auto assign = dynamic_cast<const AssignmentStmt *>(stmt)) {
@@ -14,8 +16,8 @@ void ASTPrinter::print_statement(const Statement *stmt, size_t level) {
 	if (auto function = dynamic_cast<const FunctionDefStmt *>(stmt)) {
 		indent(level);
 
-		std::cout << "FunctionDef('" << function->name
-				  << "(" << function->parameter << ")" << "')\n";
+		std::cout << "FunctionDef('" << function->name << "(" << function->parameter
+				  << ")" << "')\n";
 		print_expression(function->body.get(), level + 1);
 		return;
 	}
@@ -66,11 +68,27 @@ void ASTPrinter::print_expression(const Expression *expr, size_t level) {
 	if (auto binary = dynamic_cast<const BinaryExpr *>(expr)) {
 		indent(level);
 		switch (binary->op) {
-			case '+': std::cout << "AddExpr\n"; break;
-			case '-': std::cout << "SubExpr\n"; break;
-			case '*': std::cout << "MulExpr\n"; break;
-			case '/': std::cout << "DivExpr\n"; break;
-			case '^': std::cout << "PowerExpr\n"; break;
+			case operation::Add:
+				std::cout << "AddExpr\n";
+				break;
+			case operation::Sub:
+				std::cout << "SubExpr\n";
+				break;
+			case operation::Mul:
+				std::cout << "MulExpr\n";
+				break;
+			case operation::Div:
+				std::cout << "DivExpr\n";
+				break;
+			case operation::Pow:
+				std::cout << "PowerExpr\n";
+				break;
+			case operation::MatrixMul:
+				std::cout << "MatrixExpr\n";
+				break;
+			case operation::Mod:
+				std::cout << "ModExpr\n";
+				break;
 		}
 		print_expression(binary->left.get(), level + 1);
 		print_expression(binary->right.get(), level + 1);
@@ -91,7 +109,7 @@ void ASTPrinter::print_expression(const Expression *expr, size_t level) {
 	}
 	if (auto unary = dynamic_cast<const UnaryExpr *>(expr)) {
 		indent(level);
-		std::cout << "UnaryExpr(" << unary->op << ")\n";
+		std::cout << "UnaryExpr(" << operation_to_string(unary->op) << ")\n";
 		print_expression(unary->operand.get(), level + 1);
 		return;
 	}

@@ -1,10 +1,25 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
+
+enum class operation {
+	Add,	   // +
+	Sub,	   // -
+	Mod,	   // %
+	Mul,	   // *
+	Div,	   // /
+	Pow,	   // ^
+	MatrixMul, // **
+};
+
+[[nodiscard]]
+std::optional<operation> operation_from_char(char c);
+std::string operation_to_string(operation op);
 
 class ASTNode {
   public:
@@ -50,26 +65,25 @@ class VariableExpr : public Expression {
 		name(name) {}
 };
 
-// TODO: make op an enum class
 class UnaryExpr : public Expression {
   public:
-	char op;
+	operation op;
 	expr_ptr operand;
 
-	UnaryExpr(char op, expr_ptr operand) :
-		op(op),
+	UnaryExpr(operation op, expr_ptr operand) :
+		op(std::move(op)),
 		operand(std::move(operand)) {}
 };
 
 class BinaryExpr : public Expression {
   public:
 	expr_ptr left;
-	char op;
+	operation op;
 	expr_ptr right;
 
-	BinaryExpr(expr_ptr left, char op, expr_ptr right) :
+	BinaryExpr(expr_ptr left, operation op, expr_ptr right) :
 		left(std::move(left)),
-		op(op),
+		op(std::move(op)),
 		right(std::move(right)) {}
 };
 

@@ -14,22 +14,26 @@ class Evaluator {
 	Value evaluate_statement(const Statement *stmt);
 
 	[[nodiscard]]
-	Value apply_binary(char op, Value lhs, Value rhs);
+	Value apply_binary(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
-	Value apply_unary(char op, Value operand);
+	Value apply_unary(operation op, Value operand);
 	[[nodiscard]]
 	Value evaluate_matrix(const MatrixExpr *expr);
 
 	[[nodiscard]]
-	Value compute_rational(char op, Value lhs, Value rhs);
+	Value compute_rational(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
-	Value compute_matrix(char op, Value lhs, Value rhs);
+	Value compute_matrix(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
-	Value compute_complex(char op, Value lhs, Value rhs);
+	Value compute_complex(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
-	Value compute_rational_complex(char op, Value lhs, Value rhs);
+	Value compute_rational_complex(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
-	Value compute_complex_rational(char op, Value lhs, Value rhs);
+	Value compute_complex_rational(operation op, Value lhs, Value rhs);
+	[[nodiscard]]
+	Value compute_rational_matrix(operation op, Value lhs, Value rhs);
+	[[nodiscard]]
+	Value compute_matrix_rational(operation op, Value lhs, Value rhs);
 
   public:
 	explicit Evaluator(Context &context) :

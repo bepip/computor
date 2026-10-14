@@ -15,6 +15,7 @@ enum class token_type {
 	Div,
 	Power,
 	Mod,
+	MatrixMul,
 	LParen,
 	RParen,
 	LSquareBracket,

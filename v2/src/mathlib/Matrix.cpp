@@ -121,7 +121,7 @@ bool Matrix::operator==(const Matrix &rhs) {
 
 bool Matrix::operator!=(const Matrix &rhs) {
 	if (_rows != rhs.rows() || _columns != rhs.columns()) {
-		return true;
+		return false;
 	}
 	for (size_t i(0); i < _data.size(); ++i) {
 		if (_data[i] == rhs._data[i]) {

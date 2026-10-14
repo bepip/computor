@@ -41,6 +41,10 @@ Token Lexer::next_token() {
 			return {token_type::Minus, "-"};
 		case '*':
 			advance();
+			if (current_char() == '*') {
+				advance();
+				return {token_type::MatrixMul, "x"};
+			}
 			return {token_type::Mul, "*"};
 		case '/':
 			advance();
@@ -153,9 +157,11 @@ std::string Token::to_string() const {
 		case token_type::Mul:
 			return "MUL_SIGN('" + lexeme + "')";
 		case token_type::Power:
-			return "POWER('" + lexeme + "')";
+			return "POWER_SIGN('" + lexeme + "')";
 		case token_type::Mod:
-			return "MOD_SIGN('" + lexeme + "')";
+			return "MODULO_SIGN('" + lexeme + "')";
+		case token_type::MatrixMul:
+			return "MATRIXMUL_SIGN('" + lexeme + "')";
 		case token_type::LParen:
 			return "LPAREN('" + lexeme + "')";
 		case token_type::RParen:

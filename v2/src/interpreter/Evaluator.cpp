@@ -2,6 +2,7 @@
 #include "../../include/interpreter/error/InterpreterError.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 Value Evaluator::evaluate(const Statement *stmt) {
@@ -57,7 +58,7 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		(void)function;
 		throw InterpreterError("Evaluator", "FunctionCallExpr not implemented yet");
 	} else if (auto unary = dynamic_cast<const UnaryExpr *>(expr)) {
-		char op = unary->op;
+		operation op = unary->op;
 		Value operand = evaluate_expression(unary->operand.get());
 		return apply_unary(op, operand);
 	} else if (auto matrix = dynamic_cast<const MatrixExpr *>(expr)) {
@@ -66,7 +67,7 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 	throw InterpreterError("Evaluator", "Unsupported expression");
 }
 
-Value Evaluator::apply_binary(char op, Value lhs, Value rhs) {
+Value Evaluator::apply_binary(operation op, Value lhs, Value rhs) {
 	if (lhs.is<Rational>() && rhs.is<Rational>()) {
 		return compute_rational(op, lhs, rhs);
 	}
@@ -82,16 +83,22 @@ Value Evaluator::apply_binary(char op, Value lhs, Value rhs) {
 	if (lhs.is<Matrix>() && rhs.is<Matrix>()) {
 		return compute_matrix(op, lhs, rhs);
 	}
+	if (lhs.is<Matrix>() && rhs.is<Rational>()) {
+		return compute_matrix_rational(op, lhs, rhs);
+	}
+	if (lhs.is<Rational>() && rhs.is<Matrix>()) {
+		return compute_rational_matrix(op, lhs, rhs);
+	}
 	throw InterpreterError("Evaluator", "Can't compute this");
 }
 
-Value Evaluator::apply_unary(char op, Value operand) {
-	if (op == '+') {
+Value Evaluator::apply_unary(operation op, Value operand) {
+	if (op == operation::Add) {
 		return operand;
 	}
 	if (operand.is<Rational>()) {
 		const Rational &r = operand.get<Rational>();
-		return Value{-Rational(r)};
+		return Value{Rational(-r)};
 	}
 	if (operand.is<Complex>()) {
 		const Complex &c = operand.get<Complex>();
@@ -120,63 +127,85 @@ Value Evaluator::evaluate_matrix(const MatrixExpr *expr) {
 	return Value{Matrix(size_row, size_col, matrix)};
 }
 
-Value Evaluator::compute_rational(char op, Value lhs, Value rhs) {
+Value Evaluator::compute_rational(operation op, Value lhs, Value rhs) {
 	const Rational &left = lhs.get<Rational>();
 	const Rational &right = rhs.get<Rational>();
 	switch (op) {
-		case '+':
+		case operation::Add:
 			return Value{left + right};
-		case '-':
+		case operation::Sub:
 			return Value{left - right};
-		case '*':
+		case operation::Mul:
 			return Value{left * right};
-		case '/':
+		case operation::Div:
 			return Value{left / right};
-		case '%':
+		case operation::Mod:
 			return Value{left % right};
-		case '^':
+		case operation::Pow:
 			return Value{left ^ right};
+		default:
+			throw std::runtime_error("Rational: Unknown operator");
 	}
-	throw std::runtime_error("Rational: Unknown operator");
 }
 
-Value Evaluator::compute_matrix(char op, Value lhs, Value rhs) {
+Value Evaluator::compute_matrix(operation op, Value lhs, Value rhs) {
 	const Matrix &left = lhs.get<Matrix>();
 	const Matrix &right = rhs.get<Matrix>();
 	switch (op) {
-		case '+':
+		case operation::Add:
 			return Value{left + right};
-		case '-':
+		case operation::Sub:
 			return Value{left - right};
-		case '*':
+		case operation::Mul:
 			return Value{left * right};
+		case operation::MatrixMul:
+			return Value{left.matrix_multiplication(right)};
+		default:
+			throw std::runtime_error("Matrix: Unknown operator");
 	}
 	throw std::runtime_error("Matrix: Unknown operator");
 };
 
-Value Evaluator::compute_complex(char op, Value lhs, Value rhs) {
+Value Evaluator::compute_complex(operation op, Value lhs, Value rhs) {
 	const Complex &left = lhs.get<Complex>();
 	const Complex &right = rhs.get<Complex>();
 	switch (op) {
-		case '+':
+		case operation::Add:
 			return Value{left + right};
-		case '-':
+		case operation::Sub:
 			return Value{left - right};
-		case '*':
+		case operation::Mul:
 			return Value{left * right};
-		case '/':
+		case operation::Div:
 			return Value{left / right};
+		default:
+			std::string err =
+				"Can't use '" + operation_to_string(op) + "' on complex numbers";
+			throw std::runtime_error(err);
 	}
-	std::string err = "Can't use  '" + std::string(1, op) + "' on complex numbers";
-	throw std::runtime_error(err);
 }
 
-Value Evaluator::compute_rational_complex(char op, Value lhs, Value rhs) {
+Value Evaluator::compute_rational_complex(operation op, Value lhs, Value rhs) {
 	const Value left = Value{Complex(lhs.get<Rational>())};
 	return compute_complex(op, left, rhs);
 }
 
-Value Evaluator::compute_complex_rational(char op, Value lhs, Value rhs) {
+Value Evaluator::compute_complex_rational(operation op, Value lhs, Value rhs) {
 	const Value right = Value{Complex(rhs.get<Rational>())};
 	return compute_complex(op, lhs, right);
+}
+
+Value Evaluator::compute_rational_matrix(operation op, Value lhs, Value rhs) {
+	if (op != operation::Mul) {
+		std::string err =
+			"Can't use  '" + operation_to_string(op) + "' between a scalar and a matrix";
+		throw std::logic_error(err);
+	}
+	const Rational scalar = lhs.get<Rational>();
+	const Matrix m = rhs.get<Matrix>();
+	return Value{m * scalar};
+}
+
+Value Evaluator::compute_matrix_rational(operation op, Value lhs, Value rhs) {
+	return compute_rational_matrix(op, rhs, lhs);
 }
