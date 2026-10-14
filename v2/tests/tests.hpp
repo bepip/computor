@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <exception>
+#include <iostream>
 #include <string_view>
 
 // Text colors
@@ -29,10 +31,36 @@ struct case_result {
 	size_t fail_index;
 };
 
-//TODO: add all math tests in a single function
+// TODO: add all math tests in a single function
 test_result test_lexer();
 test_result test_rational();
+test_result test_complex();
+test_result test_matrix();
 
+void clear_screen();
 void print_title(std::string_view title);
 void print_test(size_t count, std::string_view msg, const case_result &cr);
+void print_test(size_t count, std::string_view msg, bool passed);
 void print_result(test_result result);
+int print_final_result(test_result result);
+
+template <typename Function>
+int check_throws(std::string_view name, Function operation, size_t count) {
+	try {
+		operation();
+		print_test(count, name, false);
+		return 1;
+	} catch (const std::exception &e) {
+		print_test(count, name, true);
+		std::cout << "output: " << e.what() << std::endl;
+		return 0;
+	}
+}
+
+template <typename T>
+int check(std::string_view name, const T &actual, const T &expected, size_t count) {
+	int res = actual == expected;
+	print_test(count, name, actual == expected);
+	return !res;
+}
+

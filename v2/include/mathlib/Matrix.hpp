@@ -30,8 +30,8 @@ class Matrix {
 	Matrix matrix_multiplication(const Matrix &rhs) const; // matrix multiplication
 	Matrix operator*(const Rational &scalar) const;
 
-	bool operator==(const Matrix &rhs);
-	bool operator!=(const Matrix &rhs);
+	bool operator==(const Matrix &rhs) const;
+	bool operator!=(const Matrix &rhs) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const Matrix &m);

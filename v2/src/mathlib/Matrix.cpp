@@ -107,7 +107,7 @@ Matrix Matrix::operator*(const Rational &scalar) const {
 	return {_rows, _columns, result_data};
 }
 
-bool Matrix::operator==(const Matrix &rhs) {
+bool Matrix::operator==(const Matrix &rhs) const {
 	if (_rows != rhs.rows() || _columns != rhs.columns()) {
 		return false;
 	}
@@ -119,7 +119,7 @@ bool Matrix::operator==(const Matrix &rhs) {
 	return true;
 }
 
-bool Matrix::operator!=(const Matrix &rhs) {
+bool Matrix::operator!=(const Matrix &rhs) const{
 	if (_rows != rhs.rows() || _columns != rhs.columns()) {
 		return false;
 	}

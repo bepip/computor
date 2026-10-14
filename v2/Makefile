@@ -25,7 +25,8 @@ INTERPRETER = Lexer.cpp Parser.cpp Runtime.cpp AST.cpp ASTPrinter.cpp \
 MATHLIB = Value.cpp math_utils.cpp Complex.cpp Rational.cpp Matrix.cpp
 COMMON = utils.cpp error.cpp
 MAIN = main.cpp
-TEST = lexer_test.cpp main_test.cpp tests_utils.cpp rational_test.cpp
+TEST = lexer_test.cpp main_test.cpp tests_utils.cpp rational_test.cpp complex_test.cpp \
+	   matrix_test.cpp 
 
 CLI_SRC = $(addprefix ${CLI_DIR}, ${CLI})
 INTERPRETER_SRC = $(addprefix ${INTERPRETER_DIR}, ${INTERPRETER})

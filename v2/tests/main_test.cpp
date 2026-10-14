@@ -1,17 +1,26 @@
 #include "../include/common/utils.hpp"
 #include "tests.hpp"
-#include <cstddef>
+#include <functional>
 #include <iostream>
 #include <optional>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace {
 
+	static const std::unordered_map<std::string, std::function<test_result()>> tests{
+		{"matrix", test_matrix},
+		{"complex", test_complex},
+		{"rational", test_rational},
+		{"lexer", test_lexer},
+	};
+
 	void help() {
-		std::cout << "run lexer tests with -l." << std::endl;
-		std::cout << "run parser tests with -p." << std::endl;
-		std::cout << "run math tests with -m." << std::endl;
+		std::cout << "usage: ./tester [-option]" << std::endl;
+		std::cout << "   -l : lexer" << std::endl;
+		std::cout << "   -r : runtime" << std::endl;
+		std::cout << "   -m : math" << std::endl;
 	}
 
 	void run_test(test_result &results, test_result (*f)()) {
@@ -19,21 +28,24 @@ namespace {
 	}
 
 	void run_all_tests(test_result &results) {
-		run_test(results, test_lexer);
-		std::cout << "-------------------------------------------" << std::endl;
-		run_test(results, test_rational);
-		// run_test(test_parser);
+		for (const auto &pair : tests) {
+			results += pair.second();
+			std::cout << "-------------------------------------------" << std::endl;
+		}
 	}
 
-	void run_tests_with_opt(test_result &results, const std::vector<std::string_view> &args) {
+	void run_tests_with_opt(test_result &results,
+							const std::vector<std::string_view> &args) {
 		if (contains(args, "-l")) {
 			run_test(results, test_lexer);
 		}
 		if (contains(args, "-m")) {
 			run_test(results, test_rational);
+			run_test(results, test_complex);
+			run_test(results, test_matrix);
 		}
-		// if (contains(args, "-p")) {
-		// 	run_test(results, test_parser);
+		// if (contains(args, "-r")) {
+		// 	run_test(results, test_runtime);
 		// }
 	}
 
@@ -58,12 +70,7 @@ namespace {
 int main(int ac, char *av[]) {
 	auto result = test_handler(ac, av);
 	if (result.has_value()) {
-		size_t total = result.value().total;
-		size_t failed = result.value().failed;
-		// TODO: catch tests results struct to print end result
-		std::cout << "-------------------------------------------" << std::endl;
-		std::cout << "Tests: " << total << ", Passed: " << total - failed << std::endl;
-		return failed > 0 ? 1 : 0;
+		return print_final_result(result.value());
 	}
 	return 0;
 }

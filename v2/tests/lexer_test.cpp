@@ -68,6 +68,27 @@ namespace {
 										  {token_type::Imag, "i"},
 										  {token_type::End, ""},
 									  });
+		add_test_case("D=i2+-*/^%**()[];,?", {
+												 {token_type::Ident, "D"},
+												 {token_type::Assign, "="},
+												 {token_type::Imag, "i"},
+												 {token_type::Number, "2"},
+												 {token_type::Plus, "+"},
+												 {token_type::Minus, "-"},
+												 {token_type::Mul, "*"},
+												 {token_type::Div, "/"},
+												 {token_type::Power, "^"},
+												 {token_type::Mod, "%"},
+												 {token_type::MatrixMul, "x"},
+												 {token_type::LParen, "("},
+												 {token_type::RParen, ")"},
+												 {token_type::LSquareBracket, "["},
+												 {token_type::RSquareBracket, "]"},
+												 {token_type::Semicolon, ";"},
+												 {token_type::Comma, ","},
+												 {token_type::Query, "?"},
+												 {token_type::End, ""},
+											 });
 		return tests;
 	}
 
