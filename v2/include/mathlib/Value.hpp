@@ -15,6 +15,7 @@ class Value {
 
 	void print() const;
 	void println() const;
+	std::string to_string() const;
 
 	template <typename T> bool is() const { return std::holds_alternative<T>(data); }
 

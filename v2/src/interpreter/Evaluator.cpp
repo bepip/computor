@@ -21,7 +21,7 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 		// TODO: idk how to handle functions yet
 		// NOTE: save function name in context with reduced body etc
 		auto value = evaluate_function_def(function);
-		//throw std::logic_error("Evaluator: FunctionDefStmt: Not implemented yet");
+		// throw std::logic_error("Evaluator: FunctionDefStmt: Not implemented yet");
 		return value;
 	} else if (auto expr_stmt = dynamic_cast<const ExpressionStmt *>(stmt)) {
 		return evaluate_expression(expr_stmt->expr.get());
@@ -41,7 +41,10 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 
 Value Evaluator::evaluate_expression(const Expression *expr) {
 	if (auto number = dynamic_cast<const NumberExpr *>(expr)) {
-		return Value{Rational(number->value)};
+		if (number->is_literal())
+			return Value{Rational(std::get<std::string>(number->value))};
+		if (number->is_value())
+			return std::get<Value>(number->value);
 	} else if (dynamic_cast<const ImagExpr *>(expr)) {
 		return Value{Complex(0, 1)};
 	} else if (auto variable = dynamic_cast<const VariableExpr *>(expr)) {

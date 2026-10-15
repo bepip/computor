@@ -12,6 +12,6 @@ class Context {
 
 	void add_var(const std::string &key, Value value);
 	void add_func(const std::string &key, Function func);
-	std::optional<Value> get_var(const std::string &key);
-	Function* get_func(const std::string &key);
+	std::optional<Value> get_var(const std::string &key) const;
+	const Function *get_func(const std::string &key) const;
 };

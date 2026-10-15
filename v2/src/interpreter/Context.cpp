@@ -3,7 +3,7 @@
 #include <optional>
 #include <string>
 
-std::optional<Value> Context::get_var(const std::string &key) {
+std::optional<Value> Context::get_var(const std::string &key) const{
 	auto it = variables.find(str::to_lower(key));
 	if (it != variables.end()) {
 		return it->second;
@@ -11,7 +11,7 @@ std::optional<Value> Context::get_var(const std::string &key) {
 	return std::nullopt;
 }
 
-Function *Context::get_func(const std::string &key) {
+const Function *Context::get_func(const std::string &key) const{
 	auto it = functions.find(str::to_lower(key));
 	if (it != functions.end()) {
 		return &it->second;

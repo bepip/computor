@@ -55,7 +55,13 @@ void ASTPrinter::print_statement(const Statement *stmt, size_t level) {
 void ASTPrinter::print_expression(const Expression *expr, size_t level) {
 	if (auto number = dynamic_cast<const NumberExpr *>(expr)) {
 		indent(level);
-		std::cout << "NumberExpr(" << number->value << ")\n";
+		std::cout << "NumberExpr(";
+		if (number->is_value()) {
+			std::get<Value>(number->value).print();
+		} else {
+			std::cout << std::get<std::string>(number->value);
+		}
+		std::cout << ")\n";
 		return;
 	}
 

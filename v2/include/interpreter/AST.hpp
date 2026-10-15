@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../mathlib/Value.hpp"
 #include <memory>
 #include <optional>
 #include <string>
@@ -45,12 +46,21 @@ using stmt_ptr = std::unique_ptr<Statement>;
 
 class NumberExpr : public Expression {
   public:
-	std::string value;
+	std::variant<std::string, Value> value;
 
-	NumberExpr(const std::string &value) :
+	explicit NumberExpr(const std::string &value) :
 		value(value) {}
 
-	expr_ptr clone() const override { return std::make_unique<NumberExpr>(value); };
+	explicit NumberExpr(Value value) :
+		value(std::move(value)) {}
+
+	Rational as_rational() const;
+
+	bool is_literal() const;
+
+	bool is_value() const;
+
+	expr_ptr clone() const override { return std::make_unique<NumberExpr>(*this); };
 };
 
 class ImagExpr : public Expression {
