@@ -14,6 +14,8 @@ class Evaluator {
 	Value evaluate_statement(const Statement *stmt);
 
 	[[nodiscard]]
+	Value evaluate_function_def(const FunctionDefStmt *stmt);
+	[[nodiscard]]
 	Value apply_binary(operation op, Value lhs, Value rhs);
 	[[nodiscard]]
 	Value apply_unary(operation op, Value operand);

@@ -21,6 +21,9 @@ enum class operation {
 std::optional<operation> operation_from_char(char c);
 std::string operation_to_string(operation op);
 
+class Expression;
+class Statement;
+
 class ASTNode {
   public:
 	virtual ~ASTNode() = default;
@@ -29,6 +32,7 @@ class ASTNode {
 class Expression : public ASTNode {
   public:
 	virtual ~Expression() = default;
+	virtual std::unique_ptr<Expression> clone() const = 0;
 };
 
 class Statement : public ASTNode {
@@ -45,9 +49,13 @@ class NumberExpr : public Expression {
 
 	NumberExpr(const std::string &value) :
 		value(value) {}
+
+	expr_ptr clone() const override { return std::make_unique<NumberExpr>(value); };
 };
 
-class ImagExpr : public Expression {};
+class ImagExpr : public Expression {
+	expr_ptr clone() const override { return std::make_unique<ImagExpr>(); };
+};
 
 class MatrixExpr : public Expression {
   public:
@@ -55,6 +63,20 @@ class MatrixExpr : public Expression {
 
 	MatrixExpr(std::vector<std::vector<expr_ptr>> rows) :
 		rows(std::move(rows)) {}
+
+	expr_ptr clone() const override {
+		std::vector<std::vector<expr_ptr>> cloned;
+		cloned.reserve(rows.size());
+		for (const auto &row : rows) {
+			std::vector<expr_ptr> new_row;
+			new_row.reserve(row.size());
+			for (const auto &exp : row) {
+				new_row.push_back(exp->clone());
+			}
+			cloned.push_back(std::move(new_row));
+		}
+		return std::make_unique<MatrixExpr>(std::move(cloned));
+	};
 };
 
 class VariableExpr : public Expression {
@@ -63,6 +85,8 @@ class VariableExpr : public Expression {
 
 	VariableExpr(std::string_view name) :
 		name(name) {}
+
+	expr_ptr clone() const override { return std::make_unique<VariableExpr>(name); };
 };
 
 class UnaryExpr : public Expression {
@@ -73,6 +97,10 @@ class UnaryExpr : public Expression {
 	UnaryExpr(operation op, expr_ptr operand) :
 		op(std::move(op)),
 		operand(std::move(operand)) {}
+
+	expr_ptr clone() const override {
+		return std::make_unique<UnaryExpr>(op, operand->clone());
+	};
 };
 
 class BinaryExpr : public Expression {
@@ -85,6 +113,10 @@ class BinaryExpr : public Expression {
 		left(std::move(left)),
 		op(std::move(op)),
 		right(std::move(right)) {}
+
+	expr_ptr clone() const override {
+		return std::make_unique<BinaryExpr>(left->clone(), op, right->clone());
+	};
 };
 
 class FunctionCallExpr : public Expression {
@@ -95,6 +127,10 @@ class FunctionCallExpr : public Expression {
 	FunctionCallExpr(std::string_view name, expr_ptr argument) :
 		name(name),
 		argument(std::move(argument)) {}
+
+	expr_ptr clone() const override {
+		return std::make_unique<FunctionCallExpr>(name, argument->clone());
+	};
 };
 
 class AssignmentStmt : public Statement {

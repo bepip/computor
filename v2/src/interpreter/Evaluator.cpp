@@ -20,8 +20,8 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 				  << function->parameter << ")" << "')\n";
 		// TODO: idk how to handle functions yet
 		// NOTE: save function name in context with reduced body etc
-		auto value = evaluate_expression(function->body.get());
-		throw std::logic_error("Evaluator: FunctionDefStmt: Not implemented yet");
+		auto value = evaluate_function_def(function);
+		//throw std::logic_error("Evaluator: FunctionDefStmt: Not implemented yet");
 		return value;
 	} else if (auto expr_stmt = dynamic_cast<const ExpressionStmt *>(stmt)) {
 		return evaluate_expression(expr_stmt->expr.get());
@@ -65,6 +65,12 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		return evaluate_matrix(matrix);
 	}
 	throw InterpreterError("Evaluator", "Unsupported expression");
+}
+
+Value Evaluator::evaluate_function_def(const FunctionDefStmt *stmt) {
+	Function func(stmt->parameter, stmt->body->clone());
+	context.add_func(stmt->name, std::move(func));
+	return {};
 }
 
 Value Evaluator::apply_binary(operation op, Value lhs, Value rhs) {

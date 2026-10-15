@@ -11,18 +11,18 @@ std::optional<Value> Context::get_var(const std::string &key) {
 	return std::nullopt;
 }
 
-std::optional<const FunctionDefStmt *> Context::get_func(const std::string &key) {
+Function *Context::get_func(const std::string &key) {
 	auto it = functions.find(str::to_lower(key));
 	if (it != functions.end()) {
-		return it->second;
+		return &it->second;
 	}
-	return std::nullopt;
+	return nullptr;
 }
 
-void Context::add_var(const std::string &key, const Value &value) {
-	variables.insert_or_assign(str::to_lower(key), value);
+void Context::add_var(const std::string &key, Value value) {
+	variables.insert_or_assign(str::to_lower(key), std::move(value));
 }
 
-void Context::add_func(const std::string &key, const FunctionDefStmt *func) {
-	functions.insert_or_assign(str::to_lower(key), func);
+void Context::add_func(const std::string &key, Function func) {
+	functions.insert_or_assign(str::to_lower(key), std::move(func));
 }
