@@ -20,4 +20,6 @@ class Simplifier {
 	expr_ptr simplify_binary(const BinaryExpr *expr) const;
 	expr_ptr simplify_unary(const UnaryExpr *expr) const;
 	expr_ptr simplify_variable(const VariableExpr *expr) const;
+	expr_ptr fold_constants(const NumberExpr *lhs, const NumberExpr *rhs,
+							operation op) const;
 };

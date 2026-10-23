@@ -27,7 +27,7 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 		return evaluate_expression(expr_stmt->expr.get());
 	} else if (auto eval = dynamic_cast<const EvalStmt *>(stmt)) {
 		auto value = evaluate_expression(eval->expr.get());
-		throw std::logic_error("Evaluator: EvalStmt: Not implemented yet");
+		//throw std::logic_error("Evaluator: EvalStmt: Not implemented yet");
 		return value;
 	} else if (auto equation = dynamic_cast<const SolveStmt *>(stmt)) {
 		auto lhs = evaluate_expression(equation->left.get());
