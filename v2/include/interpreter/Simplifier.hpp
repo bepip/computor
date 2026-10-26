@@ -1,6 +1,9 @@
 #pragma once
+
+#include "../mathlib/Polynomial.hpp"
 #include "AST.hpp"
 #include "Context.hpp"
+#include <optional>
 #include <string>
 
 class Simplifier {
@@ -22,4 +25,5 @@ class Simplifier {
 	expr_ptr simplify_variable(const VariableExpr *expr) const;
 	expr_ptr fold_constants(const NumberExpr *lhs, const NumberExpr *rhs,
 							operation op) const;
+	std::optional<Polynomial> to_polynomial(const Expression *expr) const;
 };

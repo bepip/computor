@@ -54,6 +54,7 @@ class NumberExpr : public Expression {
 	explicit NumberExpr(Value value) :
 		value(std::move(value)) {}
 
+	[[nodiscard]]
 	Rational as_rational() const;
 
 	bool is_literal() const;

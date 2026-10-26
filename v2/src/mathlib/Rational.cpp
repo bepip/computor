@@ -55,6 +55,14 @@ double Rational::to_double() const {
 	return static_cast<double>(_numerator) / static_cast<double>(_denominator);
 }
 
+bool Rational::is_integer() const {
+	return _denominator == 1;
+}
+
+bool Rational::is_positive() const {
+	return *this >= 0;
+}
+
 Rational Rational::operator+(const Rational &rhs) const {
 	std::int64_t g = std::gcd(_denominator, rhs._denominator);
 	//  num = (_numerator * rhs._denominator + rhs._numerator * _denominator) / g;

@@ -1,5 +1,6 @@
 #include "../../include/interpreter/Simplifier.hpp"
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
@@ -159,4 +160,86 @@ expr_ptr Simplifier::simplify_variable(const VariableExpr *expr) const {
 		throw std::invalid_argument("Functions only take Rationals");
 	}
 	return std::make_unique<NumberExpr>(value);
+}
+
+std::optional<Polynomial> Simplifier::to_polynomial(const Expression *expr) const {
+	Polynomial p;
+	if (const auto nb = dynamic_cast<const NumberExpr *>(expr)) {
+		p.add_term(0, nb->as_rational());
+		return p;
+	}
+	if (const auto var = dynamic_cast<const VariableExpr *>(expr)) {
+		if (var->name != _parameter) {
+			return std::nullopt;
+		}
+		p.add_term(1, Rational(1));
+		return p;
+	}
+	if (const auto bin = dynamic_cast<const BinaryExpr *>(expr)) {
+		switch (bin->op) {
+			case operation::Add:
+				{
+					const auto lhs = to_polynomial(bin->left.get());
+					const auto rhs = to_polynomial(bin->right.get());
+					if (!lhs.has_value() || !rhs.has_value()) {
+						return std::nullopt;
+					}
+					return lhs.value() + rhs.value();
+				}
+			case operation::Sub:
+				{
+					const auto lhs = to_polynomial(bin->left.get());
+					const auto rhs = to_polynomial(bin->right.get());
+					if (!lhs.has_value() || !rhs.has_value()) {
+						return std::nullopt;
+					}
+					return lhs.value() - rhs.value();
+				}
+			case operation::Pow:
+				{
+					if (const auto nb =
+							dynamic_cast<const NumberExpr *>(bin->right.get())) {
+						Rational pow = nb->as_rational();
+						if (!pow.is_integer() || !pow.is_positive()) {
+							return std::nullopt;
+						}
+						if (const auto var =
+								dynamic_cast<const VariableExpr *>(bin->left.get())) {
+							if (var->name != _parameter) {
+								return std::nullopt;
+							}
+							p.add_term(static_cast<std::uint64_t>(pow.numerator()),
+									   Rational(1));
+							return p;
+						}
+					}
+					return std::nullopt;
+				}
+			default:
+				return std::nullopt;
+		}
+	}
+	if (const auto unary = dynamic_cast<const UnaryExpr *>(expr)) {
+		switch (unary->op) {
+			case operation::Add:
+				{
+					const auto rhs = to_polynomial(unary->operand.get());
+					if (!rhs.has_value()) {
+						return std::nullopt;
+					}
+					return rhs.value();
+				}
+			case operation::Sub:
+				{
+					const auto rhs = to_polynomial(unary->operand.get());
+					if (!rhs.has_value()) {
+						return std::nullopt;
+					}
+					return p - rhs.value();
+				}
+			default:
+				return std::nullopt;
+		}
+	}
+	return std::nullopt;
 }

@@ -12,9 +12,17 @@ class Rational {
 	Rational(std::int64_t numerator = 0, std::int64_t denominator = 1);
 	Rational(std::string decimal);
 
+	[[nodiscard]]
 	std::int64_t numerator() const;
+	[[nodiscard]]
 	std::int64_t denominator() const;
+	[[nodiscard]]
 	double to_double() const;
+
+	[[nodiscard]]
+	bool is_integer() const;
+	[[nodiscard]]
+	bool is_positive() const;
 
 	Rational operator+(const Rational &rhs) const;
 	Rational operator-(const Rational &rhs) const;
