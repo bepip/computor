@@ -1,4 +1,6 @@
 #include "../../include/interpreter/Simplifier.hpp"
+#include <cstdint>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -200,7 +202,7 @@ std::optional<Polynomial> Simplifier::to_polynomial(const Expression *expr) cons
 					if (const auto nb =
 							dynamic_cast<const NumberExpr *>(bin->right.get())) {
 						Rational pow = nb->as_rational();
-						if (!pow.is_integer() || !pow.is_positive()) {
+						if (!pow.is_integer() || !pow.is_nonnegative()) {
 							return std::nullopt;
 						}
 						if (const auto var =
@@ -242,4 +244,64 @@ std::optional<Polynomial> Simplifier::to_polynomial(const Expression *expr) cons
 		}
 	}
 	return std::nullopt;
+}
+
+expr_ptr Simplifier::from_polynomial(const Polynomial &poly) const {
+	if (poly.is_zero()) {
+		return std::make_unique<NumberExpr>(Value{Rational(0)});
+	}
+	auto it = poly.terms().rbegin();
+	expr_ptr ast = build_term_tree(it->first, it->second);
+	while (++it != poly.terms().rend()) {
+		ast = std::make_unique<BinaryExpr>(std::move(ast), operation::Add,
+										   build_term_tree(it->first, it->second));
+	}
+	return ast;
+}
+
+expr_ptr Simplifier::build_var_tree(const std::uint64_t exponent) const {
+	if (exponent == 0) {
+		return nullptr;
+	}
+
+	if (exponent > std::numeric_limits<std::int64_t>::max()) {
+		throw std::domain_error("Exponent overflow");
+	}
+
+	auto var = std::make_unique<VariableExpr>(_parameter);
+
+	if (exponent == 1) {
+		return var;
+	}
+
+	auto exp = std::make_unique<NumberExpr>(
+		Value{Rational(static_cast<std::int64_t>(exponent))});
+	return std::make_unique<BinaryExpr>(std::move(var), operation::Pow, std::move(exp));
+}
+
+expr_ptr Simplifier::build_coef_tree(const Rational &coefficient) const {
+	if (coefficient == Rational(0)) {
+		return nullptr;
+	}
+	return std::make_unique<NumberExpr>(Value{coefficient});
+}
+
+expr_ptr Simplifier::build_term_tree(const std::uint64_t exponent,
+									 const Rational &coefficient) const {
+	auto exp = build_var_tree(exponent);
+	if (coefficient == Rational(1) && exp != nullptr) {
+		return exp;
+	}
+	if (coefficient == Rational(-1) && exp != nullptr) {
+		return std::make_unique<UnaryExpr>(operation::Sub, std::move(exp));
+	}
+	auto coef = build_coef_tree(coefficient);
+	if (coef == nullptr) {
+		// should never happen since a null coef is removed from the map
+		throw std::runtime_error("Unexpected error: null coefficient");
+	}
+	if (exp == nullptr) {
+		return coef;
+	}
+	return std::make_unique<BinaryExpr>(std::move(coef), operation::Mul, std::move(exp));
 }

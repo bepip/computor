@@ -45,6 +45,18 @@ Polynomial Polynomial::operator-(const Polynomial &rhs) const {
 	return p;
 }
 
+// Polynomial Polynomial::operator*(const Polynomial &rhs) const {
+// 	Polynomial p = *this;
+//
+// 	// TODO: all
+// 	return p;
+// }
+//
+// Polynomial Polynomial::pow(std::uint64_t exponent) const {
+// 	// TODO: all
+// 	return {};
+// }
+
 bool Polynomial::is_zero() const {
 	return _terms.empty();
 }

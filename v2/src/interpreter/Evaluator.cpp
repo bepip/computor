@@ -216,7 +216,7 @@ Value Evaluator::compute_complex_rational(operation op, Value lhs, Value rhs) {
 Value Evaluator::compute_rational_matrix(operation op, Value lhs, Value rhs) {
 	if (op != operation::Mul) {
 		std::string err =
-			"Can't use  '" + operation_to_string(op) + "' between a scalar and a matrix";
+			"Can't use '" + operation_to_string(op) + "' between a scalar and a matrix";
 		throw std::logic_error(err);
 	}
 	const Rational scalar = lhs.get<Rational>();

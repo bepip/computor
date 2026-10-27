@@ -9,8 +9,15 @@ class Polynomial {
 
   public:
 	void add_term(std::uint64_t exponent, const Rational &coefficient);
+	[[nodiscard]]
 	Polynomial operator+(const Polynomial &rhs) const;
+	[[nodiscard]]
 	Polynomial operator-(const Polynomial &rhs) const;
+	[[nodiscard]]
+	Polynomial operator*(const Polynomial &rhs) const;
+	[[nodiscard]]
+	Polynomial pow(std::uint64_t exponent) const;
+	[[nodiscard]]
 	bool is_zero() const;
 	const std::map<std::uint64_t, Rational> &terms() const;
 };

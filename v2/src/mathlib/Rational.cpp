@@ -59,7 +59,7 @@ bool Rational::is_integer() const {
 	return _denominator == 1;
 }
 
-bool Rational::is_positive() const {
+bool Rational::is_nonnegative() const {
 	return *this >= 0;
 }
 

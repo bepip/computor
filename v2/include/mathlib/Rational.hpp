@@ -22,7 +22,7 @@ class Rational {
 	[[nodiscard]]
 	bool is_integer() const;
 	[[nodiscard]]
-	bool is_positive() const;
+	bool is_nonnegative() const;
 
 	Rational operator+(const Rational &rhs) const;
 	Rational operator-(const Rational &rhs) const;

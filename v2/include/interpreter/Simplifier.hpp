@@ -26,4 +26,9 @@ class Simplifier {
 	expr_ptr fold_constants(const NumberExpr *lhs, const NumberExpr *rhs,
 							operation op) const;
 	std::optional<Polynomial> to_polynomial(const Expression *expr) const;
+	expr_ptr from_polynomial(const Polynomial &poly) const;
+	expr_ptr build_var_tree(const std::uint64_t exponent) const;
+	expr_ptr build_coef_tree(const Rational &coefficient) const;
+	expr_ptr build_term_tree(const std::uint64_t exponent,
+							 const Rational &coefficient) const;
 };
