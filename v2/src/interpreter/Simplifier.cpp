@@ -197,22 +197,27 @@ std::optional<Polynomial> Simplifier::to_polynomial(const Expression *expr) cons
 					}
 					return lhs.value() - rhs.value();
 				}
+			case operation::Mul:
+				{
+					const auto lhs = to_polynomial(bin->left.get());
+					const auto rhs = to_polynomial(bin->right.get());
+					if (!lhs.has_value() || !rhs.has_value()) {
+						return std::nullopt;
+					}
+					return lhs.value() * rhs.value();
+				}
 			case operation::Pow:
 				{
 					if (const auto nb =
 							dynamic_cast<const NumberExpr *>(bin->right.get())) {
-						Rational pow = nb->as_rational();
-						if (!pow.is_integer() || !pow.is_nonnegative()) {
+						Rational exp = nb->as_rational();
+						if (!exp.is_integer() || !exp.is_nonnegative()) {
 							return std::nullopt;
 						}
-						if (const auto var =
-								dynamic_cast<const VariableExpr *>(bin->left.get())) {
-							if (var->name != _parameter) {
-								return std::nullopt;
-							}
-							p.add_term(static_cast<std::uint64_t>(pow.numerator()),
-									   Rational(1));
-							return p;
+
+						const auto base = to_polynomial(bin->left.get());
+						if (base.has_value()) {
+							return base->pow(static_cast<std::uint64_t>(exp.numerator()));
 						}
 					}
 					return std::nullopt;
@@ -265,7 +270,7 @@ expr_ptr Simplifier::build_var_tree(const std::uint64_t exponent) const {
 	}
 
 	if (exponent > std::numeric_limits<std::int64_t>::max()) {
-		throw std::domain_error("Exponent overflow");
+		throw std::overflow_error("Exponent overflow");
 	}
 
 	auto var = std::make_unique<VariableExpr>(_parameter);

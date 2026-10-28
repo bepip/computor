@@ -1,4 +1,7 @@
 #include "../../include/mathlib/Polynomial.hpp"
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
 
 void Polynomial::add_term(std::uint64_t exponent, const Rational &coefficient) {
 	if (coefficient == Rational(0)) {
@@ -15,6 +18,11 @@ void Polynomial::add_term(std::uint64_t exponent, const Rational &coefficient) {
 	} else {
 		it->second = sum;
 	}
+}
+
+Rational Polynomial::term(std::uint64_t exponent) const {
+	const auto it = _terms.find(exponent);
+	return it == _terms.end() ? Rational(0) : it->second;
 }
 
 Polynomial Polynomial::operator+(const Polynomial &rhs) const {
@@ -45,17 +53,43 @@ Polynomial Polynomial::operator-(const Polynomial &rhs) const {
 	return p;
 }
 
-// Polynomial Polynomial::operator*(const Polynomial &rhs) const {
-// 	Polynomial p = *this;
-//
-// 	// TODO: all
-// 	return p;
-// }
-//
-// Polynomial Polynomial::pow(std::uint64_t exponent) const {
-// 	// TODO: all
-// 	return {};
-// }
+Polynomial Polynomial::operator*(const Polynomial &rhs) const {
+	if (rhs.is_zero() || this->is_zero()) {
+		return {};
+	}
+
+	Polynomial res;
+
+	const std::uint64_t m = this->_terms.rbegin()->first;
+	const std::uint64_t n = rhs._terms.rbegin()->first;
+
+	if (std::numeric_limits<std::uint64_t>::max() - n < m) {
+		throw std::overflow_error("Exponents overflow");
+	}
+
+	for (const auto &[exp_a, coef_a]: this->terms()){
+		for (const auto &[exp_b, coef_b]: rhs.terms()){
+			res.add_term(exp_a + exp_b, coef_a * coef_b);
+		}
+	}
+	return res;
+}
+
+Polynomial Polynomial::pow(std::uint64_t exponent) const {
+	if (exponent == 0) {
+		Polynomial p;
+		p.add_term(0, Rational(1));
+		return p;
+	}
+
+	Polynomial cur = *this;
+	Polynomial res = cur;
+
+	for (std::uint64_t i(1); i < exponent; ++i) {
+		res = res * cur;
+	}
+	return res;
+}
 
 bool Polynomial::is_zero() const {
 	return _terms.empty();

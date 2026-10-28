@@ -9,6 +9,7 @@ class Polynomial {
 
   public:
 	void add_term(std::uint64_t exponent, const Rational &coefficient);
+	Rational term(std::uint64_t exponent) const;
 	[[nodiscard]]
 	Polynomial operator+(const Polynomial &rhs) const;
 	[[nodiscard]]
