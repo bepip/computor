@@ -19,6 +19,7 @@ class Simplifier {
 	expr_ptr simplify(const Expression *expr) const;
 
   private:
+	expr_ptr simplify_node(const Expression *expr) const;
 	expr_ptr simplify_number(const NumberExpr *expr) const;
 	expr_ptr simplify_binary(const BinaryExpr *expr) const;
 	expr_ptr simplify_unary(const UnaryExpr *expr) const;

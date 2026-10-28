@@ -1,4 +1,6 @@
 #include "../../include/interpreter/Evaluator.hpp"
+#include "../../include/interpreter/ASTPrinter.hpp"
+#include "../../include/interpreter/Simplifier.hpp"
 #include "../../include/interpreter/error/InterpreterError.hpp"
 #include <iostream>
 #include <stdexcept>
@@ -27,7 +29,7 @@ Value Evaluator::evaluate_statement(const Statement *stmt) {
 		return evaluate_expression(expr_stmt->expr.get());
 	} else if (auto eval = dynamic_cast<const EvalStmt *>(stmt)) {
 		auto value = evaluate_expression(eval->expr.get());
-		//throw std::logic_error("Evaluator: EvalStmt: Not implemented yet");
+		// throw std::logic_error("Evaluator: EvalStmt: Not implemented yet");
 		return value;
 	} else if (auto equation = dynamic_cast<const SolveStmt *>(stmt)) {
 		auto lhs = evaluate_expression(equation->left.get());
@@ -71,8 +73,13 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 }
 
 Value Evaluator::evaluate_function_def(const FunctionDefStmt *stmt) {
-	Function func(stmt->parameter, stmt->body->clone());
+	Simplifier s(context, stmt->parameter);
+	auto simplified = s.simplify(stmt->body.get());
+	Function func(stmt->parameter, std::move(simplified));
 	context.add_func(stmt->name, std::move(func));
+	// TODO: what should it return?
+	// NOTE: probably need to change return values of evaluator methods to include
+	// functions/other expressions than Values
 	return {};
 }
 

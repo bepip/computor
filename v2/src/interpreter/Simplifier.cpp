@@ -7,6 +7,15 @@
 #include <string>
 
 expr_ptr Simplifier::simplify(const Expression *expr) const {
+	auto simplified_node = simplify_node(expr);
+	const auto poly = to_polynomial(simplified_node.get());
+	if (poly.has_value()) {
+		return from_polynomial(poly.value());
+	}
+	return simplified_node;
+}
+
+expr_ptr Simplifier::simplify_node(const Expression *expr) const {
 	if (const auto &number = dynamic_cast<const NumberExpr *>(expr)) {
 		return simplify_number(number);
 	} else if (const auto &var = dynamic_cast<const VariableExpr *>(expr)) {
