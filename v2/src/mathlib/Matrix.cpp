@@ -89,8 +89,8 @@ Matrix Matrix::matrix_multiplication(const Matrix &rhs) const {
 	std::vector<Rational> res_data(res_rows * res_cols);
 
 	for (size_t i = 0; i < res_rows; ++i) {
-		for (size_t j = 0; j < res_cols; ++j) {
-			for (size_t k = 0; k < _columns; ++k) {
+		for (size_t k = 0; k < _columns; ++k) {
+			for (size_t j = 0; j < res_cols; ++j) {
 				res.at(i, j) += at(i, k) * rhs.at(k, j);
 			}
 		}
@@ -119,7 +119,7 @@ bool Matrix::operator==(const Matrix &rhs) const {
 	return true;
 }
 
-bool Matrix::operator!=(const Matrix &rhs) const{
+bool Matrix::operator!=(const Matrix &rhs) const {
 	if (_rows != rhs.rows() || _columns != rhs.columns()) {
 		return true;
 	}
