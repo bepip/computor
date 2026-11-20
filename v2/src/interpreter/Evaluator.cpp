@@ -61,6 +61,11 @@ Value Evaluator::evaluate_expression(const Expression *expr) {
 		return apply_binary(binary->op, left, right);
 	} else if (auto function = dynamic_cast<const FunctionCallExpr *>(expr)) {
 		(void)function;
+		// NOTE: maybe add a second param to evaluate_expression to add a custom context
+		// then create the context here with the variable of the function and return 
+		// evaluate_expression with the new context
+		// or find another way to give a temp context
+		// or add functionality to function to calculate image
 		throw InterpreterError("Evaluator", "FunctionCallExpr not implemented yet");
 	} else if (auto unary = dynamic_cast<const UnaryExpr *>(expr)) {
 		operation op = unary->op;
